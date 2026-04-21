@@ -413,41 +413,36 @@ def pytest_runtest_logreport(report):
 # DASHBOARD + CHART
 # =========================
 def pytest_html_results_summary(prefix, summary, postfix):
-    if not pytest_html:
-        return
 
     passed = test_results["passed"]
     failed = test_results["failed"]
     skipped = test_results["skipped"]
 
-    prefix.extend([
-        pytest_html.extras.html(f"""
-        <h2>Test Execution Dashboard</h2>
+    prefix.append(f"""
+    <h2>Test Execution Dashboard</h2>
 
-        <p><b>Passed:</b> {passed}</p>
-        <p><b>Failed:</b> {failed}</p>
-        <p><b>Skipped:</b> {skipped}</p>
+    <p><b>Passed:</b> {passed}</p>
+    <p><b>Failed:</b> {failed}</p>
+    <p><b>Skipped:</b> {skipped}</p>
 
-        <canvas id="testChart" width="400" height="200"></canvas>
+    <canvas id="testChart" width="400" height="200"></canvas>
 
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-        var ctx = document.getElementById('testChart').getContext('2d');
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    var ctx = document.getElementById('testChart').getContext('2d');
 
-        new Chart(ctx, {{
-            type: 'pie',
-            data: {{
-                labels: ['Passed', 'Failed', 'Skipped'],
-                datasets: [{{
-                    data: [{passed}, {failed}, {skipped}],
-                    backgroundColor: ['#28a745', '#dc3545', '#ffc107']
-                }}]
-            }}
-        }});
-        </script>
-        """)
-    ])
-
+    new Chart(ctx, {{
+        type: 'pie',
+        data: {{
+            labels: ['Passed', 'Failed', 'Skipped'],
+            datasets: [{{
+                data: [{passed}, {failed}, {skipped}],
+                backgroundColor: ['#28a745', '#dc3545', '#ffc107']
+            }}]
+        }}
+    }});
+    </script>
+    """)
 
 # =========================
 # TERMINAL SUMMARY
