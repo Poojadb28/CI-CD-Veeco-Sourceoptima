@@ -4,7 +4,8 @@
 #     "fixtures.admin_creation_fixture",
 #     "fixtures.logout_fixture",
 #     "fixtures.project_fixture",
-#     "fixtures.subspace_fixture"
+#     "fixtures.subspace_fixture",
+#     "fixtures.delete_root_space_fixture"
 # ]
 
 # import pytest
@@ -102,7 +103,8 @@ pytest_plugins = [
     "fixtures.admin_creation_fixture",
     "fixtures.logout_fixture",
     "fixtures.project_fixture",
-    "fixtures.subspace_fixture"
+    "fixtures.subspace_fixture",
+    "fixtures.delete_root_space_fixture"
 ]
 
 import pytest

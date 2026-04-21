@@ -101,3 +101,48 @@ class ProjectPage:
     def verify_sub_space_created(self, name):
         locator = (By.XPATH, f"//h4[normalize-space()='{name}']")
         return self.wait.until(EC.visibility_of_element_located(locator)).is_displayed()
+    
+    # ================= DELETE ROOT SPACE ================= #
+
+    # def right_click_root_space(self, name):
+    #     from selenium.webdriver.common.action_chains import ActionChains
+
+    #     locator = (By.XPATH, f"//h4[normalize-space()='{name}']")
+
+    #     element = self.wait.until(EC.visibility_of_element_located(locator))
+
+    #     self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", element)
+
+    #     element = self.driver.find_element(*locator)
+
+    #     ActionChains(self.driver).move_to_element(element).pause(1).context_click(element).perform()
+
+
+    def click_delete_space(self):
+        import time
+        time.sleep(2)
+
+        elements = self.driver.find_elements(By.XPATH, "//*[contains(text(),'Delete')]")
+
+        for el in elements:
+            if el.is_displayed():
+                self.driver.execute_script("arguments[0].click();", el)
+                return
+
+        raise Exception("Delete option not found")
+
+
+    def confirm_delete_space(self):
+        from selenium.webdriver.common.alert import Alert
+
+        # wait for alert
+        alert = WebDriverWait(self.driver, 10).until(EC.alert_is_present())
+
+        print("Alert text:", alert.text)  
+
+        alert.accept()  # click OK
+
+    def verify_space_deleted(self, name):
+        return self.wait.until(EC.visibility_of_element_located(
+            (By.XPATH, f"//div[contains(text(),'Space \"{name}\" deleted successfully')]")
+        )).is_displayed()
