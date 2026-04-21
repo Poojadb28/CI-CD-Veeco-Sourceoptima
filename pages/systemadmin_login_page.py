@@ -33,7 +33,8 @@ class LoginPage:
     # invalid system admin login error message
     def get_error_message(self):
         return self.wait.until(
-            EC.visibility_of_element_located(
-                (By.XPATH, "//div[contains(text(),'Error during login')]")
-            )
-        ).text
+            EC.visibility_of_element_located((By.XPATH, "//div[contains(text(),'Error during login')]"))).text
+    
+    # Logout method
+    def click_logout(self):
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='Logout']"))).click()
