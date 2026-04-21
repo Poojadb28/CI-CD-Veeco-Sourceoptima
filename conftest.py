@@ -422,7 +422,7 @@ def pytest_html_results_summary(prefix, summary, postfix):
 
     prefix.extend([
         pytest_html.extras.html(f"""
-        <h2>📊 Test Execution Dashboard</h2>
+        <h2>Test Execution Dashboard</h2>
 
         <p><b>Passed:</b> {passed}</p>
         <p><b>Failed:</b> {failed}</p>
