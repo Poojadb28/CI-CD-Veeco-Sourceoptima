@@ -375,8 +375,7 @@ def pytest_runtest_makereport(item, call):
 # REPORT TITLE + METADATA
 # =========================
 def pytest_html_report_title(report):
-    report.title = "🚀 SourceOptima Automation Report"
-
+   report.title = "SourceOptima Automation Report"
 
 def pytest_configure(config):
     if hasattr(config, "_metadata"):
@@ -400,17 +399,13 @@ test_results = {
 # =========================
 # CAPTURE TEST RESULTS
 # =========================
-@pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_logreport(report):
-    outcome = yield
-    rep = outcome.get_result()
-
-    if rep.when == "call":
-        if rep.passed:
+    if report.when == "call":
+        if report.passed:
             test_results["passed"] += 1
-        elif rep.failed:
+        elif report.failed:
             test_results["failed"] += 1
-        elif rep.skipped:
+        elif report.skipped:
             test_results["skipped"] += 1
 
 
