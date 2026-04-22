@@ -191,3 +191,274 @@ class ProjectPage:
         return self.wait.until(EC.visibility_of_element_located(
             (By.XPATH, f"//div[contains(text(),'Space \"{name}\" deleted successfully')]")
         )).is_displayed()
+    
+    # ================= PROJECT ================= #
+
+    def open_root_space(self, name):
+        locator = (By.XPATH, f"//h4[normalize-space()='{name}']")
+        element = self.wait.until(EC.visibility_of_element_located(locator))
+
+        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", element)
+        self.driver.execute_script("arguments[0].click();", element)
+
+
+    def click_new_upload(self):
+        btn = self.wait.until(EC.element_to_be_clickable(
+            (By.XPATH, "//button[normalize-space()='New Upload']")
+        ))
+        self.driver.execute_script("arguments[0].click();", btn)
+
+
+    def enter_project_name(self, name):
+        field = self.wait.until(EC.visibility_of_element_located(
+            (By.XPATH, "//input[@placeholder='Enter project name']")
+        ))
+        field.clear()
+        field.send_keys(name)
+
+
+    def upload_file(self, file_path):
+        import os
+
+        file_path = os.path.abspath(file_path)
+
+        upload = self.wait.until(EC.presence_of_element_located(
+            (By.XPATH, "//input[@type='file']")
+        ))
+
+        # IMPORTANT for hidden input
+        self.driver.execute_script("arguments[0].style.display='block';", upload)
+
+        upload.send_keys(file_path)
+
+
+    def click_upload(self):
+        btn = self.wait.until(EC.element_to_be_clickable(
+            (By.XPATH, "//button[normalize-space()='Upload']")
+        ))
+        self.driver.execute_script("arguments[0].click();", btn)
+        self.wait_for_processing_complete()
+
+
+    def create_project(self, name, file_path):
+        self.click_new_upload()
+        self.enter_project_name(name)
+        self.upload_file(file_path)
+        self.click_upload()
+
+
+    def verify_project_created(self, name):
+        locator = (By.XPATH, f"//h3[normalize-space()='{name}']")
+        return self.wait.until(EC.visibility_of_element_located(locator)).is_displayed()
+    
+    # ================= FILE UPLOAD ================= #
+
+    # def open_project(self, project_name):
+
+    #     locator = (By.XPATH, f"//h3[normalize-space()='{project_name}']")
+
+    #     element = self.wait.until(EC.visibility_of_element_located(locator))
+
+    #     self.driver.execute_script(
+    #         "arguments[0].scrollIntoView({block:'center'});", element
+    #     )
+    #     element.click()
+
+    def open_project(self, project_name):
+        
+        locator = (By.XPATH, f"//h3[contains(text(),'{project_name}')]")
+
+        element = self.wait.until(EC.visibility_of_element_located(locator))
+
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block:'center'});", element
+        )
+
+        self.driver.execute_script("arguments[0].click();", element)
+
+    # def upload_new_file(self, file_path):
+
+    #     # locator inside method
+    #     upload = self.wait.until(EC.presence_of_element_located(
+    #         (By.XPATH, "//input[@type='file']")
+    #     ))
+
+    #     # scroll (important for visibility)
+    #     self.driver.execute_script("arguments[0].scrollIntoView(true);", upload)
+
+    #     # make visible (CRITICAL for hidden inputs)
+    #     self.driver.execute_script("arguments[0].style.display='block';", upload)
+
+    #     # upload file
+    #     upload.send_keys(file_path)
+
+    def wait_for_processing_complete(self):
+        # wait until modal disappears
+        self.wait.until(EC.invisibility_of_element_located(
+            (By.XPATH, "//div[contains(text(),'Processing')]")
+        ))
+
+    def verify_file_uploaded(self, file_name):
+
+        self.wait.until(lambda driver: len(
+            driver.find_elements(By.XPATH, f"//*[contains(text(),'{file_name}')]")
+        ) > 0)
+
+        elements = self.driver.find_elements(
+            By.XPATH,
+            f"//*[contains(text(),'{file_name}')]"
+        )
+
+        return any(el.is_displayed() for el in elements)
+    
+    # ================= EDIT DETAILS ================= #
+
+    def click_edit_details(self):
+        elements = self.driver.find_elements(By.XPATH, "//*[contains(text(),'Edit')]")
+
+        for el in elements:
+            if el.is_displayed():
+                self.driver.execute_script("arguments[0].click();", el)
+                return
+
+        raise Exception("Edit Details option not found")
+
+
+    def edit_space_name(self, new_name):
+        from selenium.webdriver.common.keys import Keys
+
+        field = self.wait.until(EC.visibility_of_element_located(
+            (By.XPATH, "//div[contains(@class,'z-50')]//input")
+        ))
+
+        field.click()
+        field.clear()
+        field.send_keys(Keys.CONTROL + "a")
+        field.send_keys(Keys.DELETE)
+        field.send_keys(new_name)
+
+
+    def change_icon(self):
+        icon = self.wait.until(EC.presence_of_element_located(
+            (By.XPATH, "//button[.//*[name()='svg']]")
+        ))
+        self.driver.execute_script("arguments[0].click();", icon)
+
+
+    def select_purple_color(self):
+        self.wait.until(EC.element_to_be_clickable(
+            (By.XPATH, "//button[@title='Purple']")
+        )).click()
+
+
+    def save_changes(self):
+        
+        # try multiple locators
+        locators = [
+            "//button[contains(text(),'Save')]",
+            "//button[contains(text(),'Update')]",
+            "//div[contains(@class,'z-50')]//button"
+        ]
+
+        for xpath in locators:
+            buttons = self.driver.find_elements(By.XPATH, xpath)
+
+            for btn in buttons:
+                if btn.is_displayed():
+                    self.driver.execute_script("arguments[0].click();", btn)
+
+                    # wait for modal close
+                    try:
+                        self.wait.until(EC.invisibility_of_element_located(
+                            (By.XPATH, "//div[contains(@class,'z-50')]")
+                        ))
+                    except:
+                        pass
+
+                    return
+
+        raise Exception("Save button not found")
+
+    def verify_space_updated(self, name):
+        locator = (By.XPATH, f"//h4[normalize-space()='{name}']")
+        return self.wait.until(EC.visibility_of_element_located(locator)).is_displayed()
+    
+    #-------------------------Delete Project------------------------- #
+    # def wait_for_project_page(self, project_name):
+    #     self.wait.until(
+    #         EC.visibility_of_element_located(
+    #             (By.XPATH, f"//h3[contains(text(),'{project_name}')]")
+    #         )
+    #     )
+
+    def wait_for_processing_complete(self):
+
+        # wait for overlay to disappear
+        self.wait.until(
+            EC.invisibility_of_element_located(
+                (By.XPATH, "//div[contains(@class,'fixed inset-0')]")
+            )
+        )
+
+    def click_delete_project(self):
+
+        # try multiple locators (VERY IMPORTANT)
+        locators = [
+            "//button[@title='Delete project']",
+            "//*[contains(@title,'Delete')]",
+            "//*[contains(text(),'Delete')]"
+        ]
+
+        for xpath in locators:
+            elements = self.driver.find_elements(By.XPATH, xpath)
+
+            for el in elements:
+                if el.is_displayed():
+                    self.driver.execute_script(
+                        "arguments[0].scrollIntoView({block:'center'});", el
+                    )
+        
+                    self.driver.execute_script("arguments[0].click();", el)
+                    return
+
+        raise Exception("Delete button not found")
+
+    def confirm_delete(self):
+        confirm_input = (By.XPATH, "//input[@placeholder='Type DELETE to confirm']")
+        delete_btn = (By.XPATH, "//button[normalize-space()='Delete']")
+
+        self.wait.until(EC.visibility_of_element_located(confirm_input)).send_keys("DELETE")
+        self.wait.until(EC.element_to_be_clickable(delete_btn)).click()
+
+    def wait_for_delete_complete(self):
+        self.wait.until(
+            EC.invisibility_of_element_located(
+                (By.XPATH, "//div[contains(text(),'Deleting project')]")
+            )
+        )
+    def verify_project_deleted(self, project_name):
+        elements = self.driver.find_elements(
+            By.XPATH, f"//h3[contains(text(),'{project_name}')]"
+        )
+        return len(elements) == 0
+    
+#---------------------------Search File Fumctionality-------------------------#
+    def search_file(self, name):
+        search_input = (By.XPATH, "//input[@placeholder='Search filename...']")
+        box = self.wait.until(
+            EC.visibility_of_element_located(search_input)
+        )
+        box.clear()
+        box.send_keys(name)
+
+
+    def verify_file_present(self, name):
+
+        locator = (By.XPATH, f"//*[contains(text(),'{name}')]")
+
+        return self.wait.until(
+            EC.visibility_of_element_located(locator)
+        ).is_displayed()
+
+
+        
