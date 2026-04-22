@@ -13,20 +13,52 @@ class ProjectPage:
     def click_projects(self):
         self.wait.until(EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Projects']"))).click()
 
+    # def right_click_on_canvas(self):
+    #     page_body = self.wait.until(EC.presence_of_element_located((By.XPATH, "//div[contains(@class,'flex-1 overflow-auto p-8 relative')]")))
+    #     ActionChains(self.driver).move_to_element(page_body).context_click(page_body).perform()
+
     def right_click_on_canvas(self):
-        page_body = self.wait.until(EC.presence_of_element_located((By.XPATH, "//div[contains(@class,'flex-1 overflow-auto p-8 relative')]")))
-        ActionChains(self.driver).move_to_element(page_body).context_click(page_body).perform()
+
+        canvas = self.wait.until(EC.presence_of_element_located(
+            (By.XPATH, "//div[contains(@class,'flex-1')]")
+        ))
+
+        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", canvas)
+
+        ActionChains(self.driver)\
+            .move_to_element(canvas)\
+            .pause(1)\
+            .context_click(canvas)\
+            .perform()
+
+        # VERY IMPORTANT: wait for menu to appear
+        self.wait.until(EC.presence_of_element_located(
+            (By.XPATH, "//*[contains(text(),'New Root Space')]")
+        ))
 
     # def click_new_root_space(self):
     #     self.wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='New Root Space']"))).click()
 
+    # def click_new_root_space(self):
+    #     import time
+    #     time.sleep(2)
+
+    #     elements = self.driver.find_elements(By.XPATH, "//*[contains(text(),'New Root Space')]")
+
+    #     for el in elements:
+    #         if el.is_displayed():
+    #             self.driver.execute_script("arguments[0].click();", el)
+    #             return
+
+    #     raise Exception("New Root Space option not found")
+
     def click_new_root_space(self):
-        import time
-        time.sleep(2)
+        # Wait until context menu is visible
+        menu = self.wait.until(EC.presence_of_all_elements_located(
+            (By.XPATH, "//*[contains(text(),'New Root Space')]")
+        ))
 
-        elements = self.driver.find_elements(By.XPATH, "//*[contains(text(),'New Root Space')]")
-
-        for el in elements:
+        for el in menu:
             if el.is_displayed():
                 self.driver.execute_script("arguments[0].click();", el)
                 return
