@@ -414,41 +414,30 @@ def pytest_runtest_logreport(report):
 # =========================
 def pytest_html_results_summary(prefix, summary, postfix):
 
-    if not pytest_html:
-        return
-
     passed = test_results["passed"]
     failed = test_results["failed"]
     skipped = test_results["skipped"]
 
-    html = f"""
+    total = passed + failed + skipped
+
+    prefix.append(f"""
     <h2>Test Execution Dashboard</h2>
 
-    <p><b>Passed:</b> {passed}</p>
-    <p><b>Failed:</b> {failed}</p>
-    <p><b>Skipped:</b> {skipped}</p>
-
-    <canvas id="chart" width="400" height="200"></canvas>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-    setTimeout(function() {{
-        var ctx = document.getElementById('chart').getContext('2d');
-        new Chart(ctx, {{
-            type: 'pie',
-            data: {{
-                labels: ['Passed', 'Failed', 'Skipped'],
-                datasets: [{{
-                    data: [{passed}, {failed}, {skipped}],
-                    backgroundColor: ['#28a745', '#dc3545', '#ffc107']
-                }}]
-            }}
-        }});
-    }}, 500);
-    </script>
-    """
-
-    prefix.append(pytest_html.extras.html(html))
+    <table style="border-collapse: collapse; width: 60%; font-size:16px;">
+        <tr style="background-color:#f2f2f2;">
+            <th style="border:1px solid black; padding:8px;">Total</th>
+            <th style="border:1px solid black; padding:8px;">Passed</th>
+            <th style="border:1px solid black; padding:8px;">Failed</th>
+            <th style="border:1px solid black; padding:8px;">Skipped</th>
+        </tr>
+        <tr>
+            <td style="border:1px solid black; padding:8px;">{total}</td>
+            <td style="border:1px solid black; padding:8px; color:green;"><b>{passed}</b></td>
+            <td style="border:1px solid black; padding:8px; color:red;"><b>{failed}</b></td>
+            <td style="border:1px solid black; padding:8px; color:orange;"><b>{skipped}</b></td>
+        </tr>
+    </table>
+    """)
 
 # =========================
 # TERMINAL SUMMARY
