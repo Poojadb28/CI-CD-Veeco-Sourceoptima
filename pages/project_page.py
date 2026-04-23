@@ -93,21 +93,32 @@ class ProjectPage:
     
    # ================= SUB SPACE ================= #
 
+    # def right_click_root_space(self, name):
+    #     from selenium.webdriver.common.action_chains import ActionChains
+
+    #     locator = (By.XPATH, f"//h4[normalize-space()='{name}']")
+
+    #     element = self.wait.until(EC.visibility_of_element_located(locator))
+
+    #     # scroll to element
+    #     self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", element)
+
+    #     # re-fetch (avoid stale element)
+    #     element = self.driver.find_element(*locator)
+
+    #     # right click
+    #     ActionChains(self.driver).move_to_element(element).pause(1).context_click(element).perform()
+
+    from selenium.webdriver import ActionChains
+
     def right_click_root_space(self, name):
-        from selenium.webdriver.common.action_chains import ActionChains
+        element = self.wait.until(
+            EC.visibility_of_element_located(
+                (By.XPATH, f"//*[text()='{name}']")
+            )
+        )
 
-        locator = (By.XPATH, f"//h4[normalize-space()='{name}']")
-
-        element = self.wait.until(EC.visibility_of_element_located(locator))
-
-        # scroll to element
-        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", element)
-
-        # re-fetch (avoid stale element)
-        element = self.driver.find_element(*locator)
-
-        # right click
-        ActionChains(self.driver).move_to_element(element).pause(1).context_click(element).perform()
+        ActionChains(self.driver).context_click(element).perform()
 
 
     def click_add_sub_space(self):
@@ -322,15 +333,30 @@ class ProjectPage:
     
     # ================= EDIT DETAILS ================= #
 
+    # def click_edit_details(self):
+    #     elements = self.driver.find_elements(By.XPATH, "//*[contains(text(),'Edit')]")
+
+    #     for el in elements:
+    #         if el.is_displayed():
+    #             self.driver.execute_script("arguments[0].click();", el)
+    #             return
+
+    #     raise Exception("Edit Details option not found")
+
     def click_edit_details(self):
-        elements = self.driver.find_elements(By.XPATH, "//*[contains(text(),'Edit')]")
+        edit = self.wait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//li[normalize-space()='Edit Details']")
+            )
+        )
+        edit.click()
 
-        for el in elements:
-            if el.is_displayed():
-                self.driver.execute_script("arguments[0].click();", el)
-                return
-
-        raise Exception("Edit Details option not found")
+        # WAIT FOR EDIT POPUP INPUT
+        self.wait.until(
+            EC.visibility_of_element_located(
+                (By.XPATH, "//input[@placeholder='e.g. Finance, Project Alpha...']")
+            )
+        )
 
 
     def edit_space_name(self, new_name):

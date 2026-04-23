@@ -11,7 +11,8 @@
 #     "fixtures.file_upload_fixture",
 #     "fixtures.edit_space_fixture",
 #     "fixtures.delete_project_fixture",
-#     "fixtures.search_file_fixture"
+#     "fixtures.search_file_fixture",
+#     "fixtures.available_plays_fixture"
 # ]
 
 # import pytest
@@ -116,7 +117,8 @@ pytest_plugins = [
     "fixtures.file_upload_fixture",
     "fixtures.edit_space_fixture",
     "fixtures.delete_project_fixture",
-    "fixtures.search_file_fixture"
+    "fixtures.search_file_fixture",
+    "fixtures.available_plays_fixture"
 ]
 
 import pytest
