@@ -109,16 +109,36 @@ class ProjectPage:
     #     # right click
     #     ActionChains(self.driver).move_to_element(element).pause(1).context_click(element).perform()
 
-    from selenium.webdriver import ActionChains
+    # from selenium.webdriver import ActionChains
+
+    # def right_click_root_space(self, name):
+    #     element = self.wait.until(
+    #         EC.visibility_of_element_located(
+    #             (By.XPATH, f"//*[text()='{name}']")
+    #         )
+    #     )
+
+    #     ActionChains(self.driver).context_click(element).perform()
 
     def right_click_root_space(self, name):
+
         element = self.wait.until(
             EC.visibility_of_element_located(
                 (By.XPATH, f"//*[text()='{name}']")
             )
         )
 
-        ActionChains(self.driver).context_click(element).perform()
+        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", element)
+
+        from selenium.webdriver.common.action_chains import ActionChains
+        ActionChains(self.driver).move_to_element(element).pause(1).context_click(element).perform()
+
+        # IMPORTANT: wait for menu
+        self.wait.until(
+            EC.presence_of_element_located(
+                (By.XPATH, "//*[contains(text(),'Edit')]")
+            )
+        )
 
 
     def click_add_sub_space(self):
@@ -312,11 +332,11 @@ class ProjectPage:
     #     # upload file
     #     upload.send_keys(file_path)
 
-    def wait_for_processing_complete(self):
-        # wait until modal disappears
-        self.wait.until(EC.invisibility_of_element_located(
-            (By.XPATH, "//div[contains(text(),'Processing')]")
-        ))
+    # def wait_for_processing_complete(self):
+    #     # wait until modal disappears
+    #     self.wait.until(EC.invisibility_of_element_located(
+    #         (By.XPATH, "//div[contains(text(),'Processing')]")
+    #     ))
 
     def verify_file_uploaded(self, file_name):
 
@@ -344,19 +364,20 @@ class ProjectPage:
     #     raise Exception("Edit Details option not found")
 
     def click_edit_details(self):
-        edit = self.wait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, "//li[normalize-space()='Edit Details']")
-            )
-        )
-        edit.click()
 
-        # WAIT FOR EDIT POPUP INPUT
-        self.wait.until(
-            EC.visibility_of_element_located(
-                (By.XPATH, "//input[@placeholder='e.g. Finance, Project Alpha...']")
+        # wait for menu items
+        elements = self.wait.until(
+            EC.presence_of_all_elements_located(
+                (By.XPATH, "//*[contains(text(),'Edit')]")
             )
         )
+
+        for el in elements:
+            if el.is_displayed():
+                self.driver.execute_script("arguments[0].click();", el)
+                return
+
+        raise Exception("Edit Details option not found")
 
 
     def edit_space_name(self, new_name):
@@ -494,6 +515,24 @@ class ProjectPage:
         return self.wait.until(
             EC.visibility_of_element_located(locator)
         ).is_displayed()
+    
+  
+#---------------------------Plays-------------------------#
+
+    def select_all_files(self):
+
+        select_all_btn = (By.XPATH, "//button[normalize-space()='Select All']")
+
+        element = self.wait.until(EC.element_to_be_clickable(select_all_btn))
+
+        # scroll for safety
+        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", element)
+
+        # click using JS (avoids overlay issues)
+        self.driver.execute_script("arguments[0].click();", element)
+
+
+    
 
 
         
