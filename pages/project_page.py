@@ -1,3 +1,5 @@
+import time
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -530,6 +532,150 @@ class ProjectPage:
 
         # click using JS (avoids overlay issues)
         self.driver.execute_script("arguments[0].click();", element)
+
+# ================= DELETE FILE ================= #
+
+# ================= DELETE CONFIRMATION LOCATORS ================= #
+
+    confirm_delete_input = (By.XPATH, "//input[@placeholder='Type DELETE to confirm']")
+    delete_button = (By.XPATH, "//button[normalize-space()='Delete']")
+
+    def delete_file(self, file_name):
+
+        file_locator = (By.XPATH, f"//*[contains(text(),'{file_name}')]")
+
+        file_element = self.wait.until(
+            EC.visibility_of_element_located(file_locator)
+        )
+
+        ActionChains(self.driver).move_to_element(file_element).perform()
+
+        delete_icon = self.wait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, f"//*[contains(text(),'{file_name}')]/ancestor::*//button[contains(@title,'Delete')]")
+            )
+        )
+
+        self.driver.execute_script("arguments[0].click();", delete_icon)
+
+        # Confirm delete
+        confirm = self.wait.until(
+            EC.visibility_of_element_located(self.confirm_delete_input)
+        )
+        confirm.clear()
+        confirm.send_keys("DELETE")
+
+        self.wait.until(
+            EC.element_to_be_clickable(self.delete_button)
+        ).click()
+
+        # IMPORTANT: WAIT UNTIL FILE DISAPPEARS
+        self.wait.until(
+            EC.invisibility_of_element_located(file_locator)
+        )
+
+
+    def is_file_deleted(self, file_name):
+
+        elements = self.driver.find_elements(
+            By.XPATH, f"//*[contains(text(),'{file_name}')]"
+        )
+
+        return len(elements) == 0
+    
+    # ================= VERIFY BUTTONS ================= #
+    def deselect_all_files(self):
+
+        deselect_all_button = (By.XPATH, "//button[normalize-space()='Deselect All']")
+
+        element = self.wait.until(EC.element_to_be_clickable(deselect_all_button))
+
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block:'center'});", element
+        )
+
+        self.driver.execute_script("arguments[0].click();", element)
+
+    def verify_deselect_visible(self):
+
+        return self.wait.until(
+            EC.visibility_of_element_located(
+                (By.XPATH, "//button[normalize-space()='Deselect All']")
+            )
+        ).is_displayed()
+
+
+    def verify_select_visible(self):
+
+        return self.wait.until(
+            EC.visibility_of_element_located(
+                (By.XPATH, "//button[normalize-space()='Select All']")
+            )
+        ).is_displayed()
+    
+    # ================= FILTER ================= #
+
+    def get_filter_dropdown(self):
+
+        filter_dropdown = (By.XPATH, "//select[contains(@class,'text-sm')]")
+
+        return self.wait.until(
+            EC.visibility_of_element_located(filter_dropdown)
+        )
+
+
+    def apply_filter(self, label_text):
+
+        dropdown = self.get_filter_dropdown()
+
+        # wait until dropdown is enabled
+        self.wait.until(lambda d: dropdown.is_enabled())
+
+        self.driver.execute_script(
+            """
+            const select = arguments[0];
+            const label = arguments[1];
+
+            for (let option of select.options) {
+                if (option.text.includes(label)) {
+                    select.value = option.value;
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                    return;
+                }
+            }
+            """,
+            dropdown,
+            label_text
+        )
+
+        # IMPORTANT: wait for filter effect (UI refresh)
+        self.wait.until(lambda d: dropdown.get_attribute("value") is not None)
+
+        # small stability wait (React rendering)
+        time.sleep(5)
+
+
+
+    def clear_filter(self):
+
+        try:
+            clear_btn = self.wait.until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, "//button[@title='Clear filter']")
+                )
+            )
+
+            self.driver.execute_script("arguments[0].click();", clear_btn)
+
+            # wait until dropdown resets
+            dropdown = self.get_filter_dropdown()
+
+            self.wait.until(lambda d: dropdown.get_attribute("value") == "" or dropdown.get_attribute("value") is None)
+
+            time.sleep(2)
+
+        except:
+            pass
 
 
     

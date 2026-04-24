@@ -13,7 +13,17 @@
 #     "fixtures.delete_project_fixture",
 #     "fixtures.search_file_fixture",
 #     "fixtures.available_plays_fixture",
-#     "fixtures.cost_reduction_play_fixture"
+#     "fixtures.cost_reduction_play_fixture",
+#     "fixtures.design_review_fixture",
+#     "fixtures.drawing_checker_both_play_fixture",
+#     "fixtures.drawing_checker_general_play_fixture",
+#     "fixtures.drawing_checker_v2_play_fixture",
+#     "fixtures.drawing_checker_veeco_play_fixture",
+#     "fixtures.tariff_analysis_play_fixture",
+#     "fixtures.download_logs_fixture",
+#     "fixtures.delete_file_fixture",
+#     "fixtures.select_deselect_all_files_fixture",
+#     "fixtures.filter_labels_fixture"
 # ]
 
 # import pytest
@@ -62,11 +72,17 @@
 #         chrome_options.add_argument("--disable-gpu")
 #         chrome_options.add_argument("--window-size=1920,1080")
 
+#         download_dir = os.path.abspath("downloads")
+#         os.makedirs(download_dir, exist_ok=True)
+
 #         # Fix download / security issues
 #         prefs = {
+#             "download.default_directory": download_dir,
 #             "download.prompt_for_download": False,
 #             "download.directory_upgrade": True,
-#             "safebrowsing.enabled": True
+#             "safebrowsing.enabled": True,
+
+#             "profile.default_content_setting_values.automatic_downloads": 1
 #         }
 #         chrome_options.add_experimental_option("prefs", prefs)
 
@@ -120,7 +136,17 @@ pytest_plugins = [
     "fixtures.delete_project_fixture",
     "fixtures.search_file_fixture",
     "fixtures.available_plays_fixture",
-    "fixtures.cost_reduction_play_fixture"
+    "fixtures.cost_reduction_play_fixture",
+    "fixtures.design_review_fixture",
+    "fixtures.drawing_checker_both_play_fixture",
+    "fixtures.drawing_checker_v2_play_fixture",
+    "fixtures.drawing_checker_general_play_fixture",
+    "fixtures.drawing_checker_veeco_play_fixture",
+    "fixtures.tariff_analysis_play_fixture",
+    "fixtures.download_logs_fixture",
+    "fixtures.delete_file_fixture",
+    "fixtures.select_deselect_all_files_fixture",
+    "fixtures.filter_labels_fixture"
 ]
 
 import pytest
@@ -206,7 +232,8 @@ def browser(request):
             "download.default_directory": download_dir,
             "download.prompt_for_download": False,
             "download.directory_upgrade": True,
-            "safebrowsing.enabled": True
+            "safebrowsing.enabled": True,
+            "profile.default_content_setting_values.automatic_downloads": 1
         }
         chrome_options.add_experimental_option("prefs", prefs)
 
