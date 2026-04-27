@@ -94,19 +94,18 @@ pipeline {
         }
 
         stage('Run Tests') {
-            steps {
-                bat """^
-                %PYTHON% -m pytest tests/plays/test_cost_reduction_play.py ^
-                -v ^
-                --headless ^
-                --html=reports/report.html ^
-                --self-contained-html ^
-                --capture=sys^
-                --reruns 1
-                """
+    steps {
+        bat """
+            %PYTHON% -m pytest tests/plays/test_cost_reduction_play.py ^
+            -v ^
+            --headless ^
+            --html=reports/report.html ^
+            --self-contained-html ^
+            --capture=sys ^
+            --reruns 1
+            """
+                }
             }
-        }
-    }
 
     post {
 
