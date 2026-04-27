@@ -1,4 +1,5 @@
 import time
+import os
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -37,6 +38,31 @@ class ProjectPage:
         self.wait.until(EC.presence_of_element_located(
             (By.XPATH, "//*[contains(text(),'New Root Space')]")
         ))
+
+    # def right_click_on_canvas(self):
+
+    #     canvas = self.wait.until(
+    #         EC.visibility_of_element_located(
+    #             (By.XPATH, "//div[contains(@class,'react-flow')]")
+    #         )
+    #     )
+
+    #     # scroll to canvas
+    #     self.driver.execute_script(
+    #         "arguments[0].scrollIntoView({block:'center'});", canvas
+    #     )
+
+    #     import time
+    #     time.sleep(2)  
+
+    #     ActionChains(self.driver).move_to_element(canvas).context_click().perform()
+
+    #     # wait for menu
+    #     self.wait.until(
+    #         EC.visibility_of_element_located(
+    #             (By.XPATH, "//span[contains(text(),'New Root Space')]")
+    #         )
+    #     )
 
     # def click_new_root_space(self):
     #     self.wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='New Root Space']"))).click()
@@ -676,6 +702,46 @@ class ProjectPage:
 
         except:
             pass
+
+    # ================= EXPORT CLASSIFICATION ================= #
+
+    export_classification_btn = (By.XPATH, "//button[contains(text(),'Export Classification')]")
+
+    def click_export_classification(self):
+
+        btn = self.wait.until(
+            EC.element_to_be_clickable(self.export_classification_btn)
+        )
+
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block:'center'});", btn
+        )
+
+        import time
+        time.sleep(1)
+
+        self.driver.execute_script("arguments[0].click();", btn)
+
+
+    def wait_for_classification_download(self, download_dir, timeout=60):
+
+        import time
+        end_time = time.time() + timeout
+
+        while time.time() < end_time:
+
+            files = os.listdir(download_dir)
+
+            for f in files:
+                file_lower = f.lower()
+
+                if "classification" in file_lower and file_lower.endswith(".xlsx"):
+                    print("Downloaded:", f)
+                    return True
+
+            time.sleep(1)
+
+        raise Exception("Classification file not downloaded")
 
 
     

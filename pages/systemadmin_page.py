@@ -1,3 +1,5 @@
+import os
+import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -41,11 +43,30 @@ class SystemAdminPage:
 
     # ================= AVAILABLE PLAYS ================= #
 
+    DISABLE_MSG = (By.XPATH, "//*[contains(text(),'disabled') and not(contains(@style,'display: none'))]")
+    ENABLE_MSG = (By.XPATH, "//*[contains(text(),'enabled') and not(contains(@style,'display: none'))]")
+
     def go_to_available_plays(self):
         section = self.wait.until(
             EC.visibility_of_element_located(self.AVAILABLE_PLAYS_SECTION)
         )
         self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", section)
+
+    # def toggle_play(self, play_name):
+
+    #     print(f"Toggling: {play_name}")
+
+    #     toggle = self.wait.until(
+    #         EC.element_to_be_clickable((
+    #             By.XPATH,
+    #             f"//h3[normalize-space()='{play_name}']"
+    #             f"/ancestor::div[contains(@class,'rounded-lg')]"
+    #             f"//button[contains(@class,'inline-flex')]"
+    #         ))
+    #     )
+
+    #     self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", toggle)
+    #     self.driver.execute_script("arguments[0].click();", toggle)
 
     def toggle_play(self, play_name):
 
@@ -63,8 +84,56 @@ class SystemAdminPage:
         self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", toggle)
         self.driver.execute_script("arguments[0].click();", toggle)
 
+        # IMPORTANT: wait for state change
+        self.wait.until(lambda d: toggle.is_displayed())
+
     def get_disable_message(self):
         return self.get_text(self.DISABLE_MSG)
+    
+    def wait_for_disable_message(self):
+        self.wait.until(
+            EC.text_to_be_present_in_element(
+                self.DISABLE_MSG,
+                "disabled"
+            )
+        )
+        return self.driver.find_element(*self.DISABLE_MSG).text.strip()
+
+
+    def wait_for_enable_message(self):
+        self.wait.until(
+            EC.text_to_be_present_in_element(
+                self.ENABLE_MSG,
+                "enabled"
+            )
+        )
+        return self.driver.find_element(*self.ENABLE_MSG).text.strip()
+    
 
     def get_enable_message(self):
         return self.get_text(self.ENABLE_MSG)
+    
+    
+    #------------Credit History Download----------------#
+    # Export
+    export_credit_history_button = (By.XPATH, "//button[normalize-space()='Export Credit History']")
+    
+    def click_export_credit_history(self):
+        self.wait.until(EC.element_to_be_clickable(self.export_credit_history_button)).click()
+
+    def wait_for_credit_history_download(self, download_dir, timeout=60):
+
+        end_time = time.time() + timeout
+
+        while time.time() < end_time:
+            files = os.listdir(download_dir)
+
+            for f in files:
+                file_lower = f.lower()
+
+                if "credit_history" in file_lower and file_lower.endswith(".xlsx"):
+                    return True
+
+            time.sleep(1)
+
+        raise Exception("Credit history file not downloaded")

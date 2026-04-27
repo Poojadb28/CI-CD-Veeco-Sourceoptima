@@ -10,38 +10,75 @@ class CostReductionPage:
         self.driver = driver
         self.wait = WebDriverWait(driver, 120)
 
-    # LOCATORS
-    dropdown = (By.XPATH, "//select[contains(@class,'text-sm')]")
-    option = (By.XPATH, "//option[normalize-space()='Cost Reduction']")
-    run_button = (By.XPATH, "//button[contains(text(),'Run Cost Reduction')]")
-    view_results = (By.XPATH, "//button[normalize-space()='View Results']")
-    view_details = (By.XPATH, "//button[normalize-space()='View Details']")
-    report_tab = (By.XPATH, "//button[normalize-space()='Cost Reduction']")
-    popup_overlay = (By.XPATH, "//div[contains(@class,'fixed inset-0')]")
+    # LOCATORS (Stable)
+    dropdown = (By.XPATH, "//select")
+    option = (By.XPATH, "//option[contains(.,'Cost Reduction')]")
+    run_button = (By.XPATH, "//button[contains(.,'Run')]")
+    view_results = (By.XPATH, "//button[contains(.,'View Results')]")
+    view_details = (By.XPATH, "//button[contains(.,'View Details')]")
+    report_tab = (By.XPATH,"//div[contains(@class,'fixed')]//button[normalize-space()='Cost Reduction']")
+    active_report_tab = (By.XPATH,"//div[contains(@class,'fixed')]//button[contains(@class,'border-green-800') and normalize-space()='Cost Reduction']")
+    popup_overlay = (By.XPATH, "//div[contains(@class,'fixed')]")
     close_icon = (By.XPATH, "//button[contains(@class,'p-2')]")
 
     # ACTIONS
 
     def select_cost_reduction(self):
-        self.wait.until(EC.element_to_be_clickable(self.dropdown)).click()
+        dropdown = self.wait.until(EC.element_to_be_clickable(self.dropdown))
+        dropdown.click()
+
+        self.wait.until(lambda d: len(dropdown.find_elements(By.TAG_NAME, "option")) > 1)
+
         self.wait.until(EC.element_to_be_clickable(self.option)).click()
 
     def click_run(self):
-        self.wait.until(EC.element_to_be_clickable(self.run_button)).click()
+        run_btn = self.wait.until(EC.element_to_be_clickable(self.run_button))
+        self.wait.until(lambda d: run_btn.is_enabled())
+
+        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", run_btn)
+        self.driver.execute_script("arguments[0].click();", run_btn)
 
     def wait_for_processing(self):
-        self.wait.until(EC.element_to_be_clickable(self.view_details))
+        self.wait.until(EC.element_to_be_clickable(self.view_results))
 
     def click_view_results(self):
-        self.wait.until(EC.element_to_be_clickable(self.view_results)).click()
+        btn = self.wait.until(EC.element_to_be_clickable(self.view_results))
+        self.driver.execute_script("arguments[0].click();", btn)
 
     def click_view_details(self):
-        self.wait.until(EC.element_to_be_clickable(self.view_details)).click()
+        btn = self.wait.until(EC.element_to_be_clickable(self.view_details))
+        self.driver.execute_script("arguments[0].click();", btn)
+
+    # def open_report_tab(self):
+
+    #     # Handle optional popup safely
+    #     try:
+    #         self.wait.until(EC.presence_of_element_located(self.popup_overlay))
+    #     except:
+    #         pass
+
+    #     element = self.wait.until(EC.element_to_be_clickable(self.report_tab))
+    #     self.driver.execute_script("arguments[0].click();", element)
 
     def open_report_tab(self):
-        self.wait.until(EC.visibility_of_element_located(self.popup_overlay))
-        element = self.wait.until(EC.element_to_be_clickable(self.report_tab))
-        self.driver.execute_script("arguments[0].click();", element)
+
+        # Wait for popup
+        self.wait.until(
+            EC.presence_of_element_located(self.popup_overlay)
+        )
+
+        # Click tab
+        tab = self.wait.until(
+            EC.element_to_be_clickable(self.report_tab)
+        )
+
+        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", tab)
+        self.driver.execute_script("arguments[0].click();", tab)
+
+        # VERIFY TAB SWITCH (THIS FIXES YOUR ISSUE)
+        self.wait.until(
+            EC.presence_of_element_located(self.active_report_tab)
+        )
 
     def take_screenshot(self):
         os.makedirs("screenshots", exist_ok=True)
@@ -51,5 +88,4 @@ class CostReductionPage:
         element = self.wait.until(EC.element_to_be_clickable(self.close_icon))
         self.driver.execute_script("arguments[0].click();", element)
 
-        # Wait for page ready again
         self.wait.until(EC.element_to_be_clickable(self.dropdown))

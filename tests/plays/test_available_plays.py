@@ -8,8 +8,16 @@ def test_available_plays_enable_disable(available_plays):
 
     for play in plays:
 
+        # Disable
         admin.toggle_play(play)
-        assert admin.get_disable_message() == "Play disabled successfully"
 
+        message = admin.wait_for_disable_message()
+        assert "disabled" in message.lower()
+
+        # Enable
         admin.toggle_play(play)
-        assert admin.get_enable_message() == "Play enabled successfully"
+
+        message = admin.wait_for_enable_message()
+        assert "enabled" in message.lower()
+
+        

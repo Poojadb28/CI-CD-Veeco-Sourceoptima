@@ -23,7 +23,12 @@
 #     "fixtures.download_logs_fixture",
 #     "fixtures.delete_file_fixture",
 #     "fixtures.select_deselect_all_files_fixture",
-#     "fixtures.filter_labels_fixture"
+#     "fixtures.filter_labels_fixture",
+#     "fixtures.create_new_project_fixture",
+#     "fixtures.export_credit_history_fixture",
+#     "fixtures.export_classification_to_excel_fixture",
+#     "fixtures.duplicate_admin_creation_fixture",
+#     "fixtures.duplicate_user_creation_fixture"
 # ]
 
 # import pytest
@@ -146,7 +151,12 @@ pytest_plugins = [
     "fixtures.download_logs_fixture",
     "fixtures.delete_file_fixture",
     "fixtures.select_deselect_all_files_fixture",
-    "fixtures.filter_labels_fixture"
+    "fixtures.filter_labels_fixture",
+    "fixtures.create_new_project_fixture",
+    "fixtures.export_credit_history_fixture",
+    "fixtures.export_classification_to_excel_fixture",
+    "fixtures.duplicate_admin_creation_fixture",
+    "fixtures.duplicate_user_creation_fixture"
 ]
 
 import pytest
