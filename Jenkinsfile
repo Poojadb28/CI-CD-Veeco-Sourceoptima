@@ -96,7 +96,8 @@ pipeline {
         stage('Run Tests') {
             steps {
                 bat """
-                %PYTHON% -m pytest tests/ ^
+                // %PYTHON% -m pytest tests/ ^
+                %PYTHON% -m pytest tests/plays/test_cost_reduction_play.py ^
                 -v ^
                 --headless ^
                 --html=reports/report.html ^

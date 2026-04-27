@@ -29,7 +29,21 @@ class CostReductionPage:
 
         self.wait.until(lambda d: len(dropdown.find_elements(By.TAG_NAME, "option")) > 1)
 
-        self.wait.until(EC.element_to_be_clickable(self.option)).click()
+        # self.wait.until(EC.element_to_be_clickable(self.option)).click()
+        element = self.wait.until(EC.presence_of_element_located(self.option))
+
+        # Wait until visible
+        self.wait.until(EC.visibility_of(element))
+
+        # Scroll into view (important for headless)
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
+
+        # Try normal click first
+        try:
+            element.click()
+        except:
+            # Fallback to JS click (very common CI fix)
+            self.driver.execute_script("arguments[0].click();", element)
 
     def click_run(self):
         run_btn = self.wait.until(EC.element_to_be_clickable(self.run_button))
