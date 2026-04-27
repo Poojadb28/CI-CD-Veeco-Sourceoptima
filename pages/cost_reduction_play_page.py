@@ -23,26 +23,48 @@ class CostReductionPage:
 
     # ACTIONS
 
+    # def select_cost_reduction(self):
+    #     dropdown = self.wait.until(EC.element_to_be_clickable(self.dropdown))
+    #     dropdown.click()
+
+    #     self.wait.until(lambda d: len(dropdown.find_elements(By.TAG_NAME, "option")) > 1)
+
+    #     # self.wait.until(EC.element_to_be_clickable(self.option)).click()
+    #     element = self.wait.until(EC.presence_of_element_located(self.option))
+
+    #     # Wait until visible
+    #     self.wait.until(EC.visibility_of(element))
+
+    #     # Scroll into view (important for headless)
+    #     self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
+
+    #     # Try normal click first
+    #     try:
+    #         element.click()
+    #     except:
+    #         # Fallback to JS click (very common CI fix)
+    #         self.driver.execute_script("arguments[0].click();", element)
+
     def select_cost_reduction(self):
-        dropdown = self.wait.until(EC.element_to_be_clickable(self.dropdown))
-        dropdown.click()
 
-        self.wait.until(lambda d: len(dropdown.find_elements(By.TAG_NAME, "option")) > 1)
+        # Step 1: Wait for page to stabilize (IMPORTANT in CI)
+        self.wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
 
-        # self.wait.until(EC.element_to_be_clickable(self.option)).click()
-        element = self.wait.until(EC.presence_of_element_located(self.option))
+        # Step 2: Click Cost Reduction tab (MANDATORY)
+        cost_tab = (By.XPATH, "//button[normalize-space()='Cost Reduction']")
+        self.wait.until(EC.element_to_be_clickable(cost_tab)).click()
 
-        # Wait until visible
-        self.wait.until(EC.visibility_of(element))
+        # Step 3: Wait for dropdown to appear (NOT presence — visibility)
+        self.wait.until(EC.visibility_of_element_located(self.option))
 
-        # Scroll into view (important for headless)
+        # Step 4: Now interact safely
+        element = self.wait.until(EC.visibility_of_element_located(self.option))
+
         self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
 
-        # Try normal click first
         try:
             element.click()
         except:
-            # Fallback to JS click (very common CI fix)
             self.driver.execute_script("arguments[0].click();", element)
 
     def click_run(self):
