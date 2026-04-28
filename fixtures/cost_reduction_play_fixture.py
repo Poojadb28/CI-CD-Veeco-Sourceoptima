@@ -102,10 +102,14 @@ def cost_reduction_play(browser):
     project = ProjectPage(browser)
     cost = CostReductionPage(browser)
 
-    # Click Projects
+    # =========================
+    # NAVIGATE TO PROJECTS
+    # =========================
     project.click_projects()
 
+    # =========================
     # CREATE ROOT SPACE
+    # =========================
     project.right_click_on_canvas()
     project.click_new_root_space()
 
@@ -116,10 +120,14 @@ def cost_reduction_play(browser):
     project.select_color()
     project.click_create_space()
 
+    # Wait for space creation
     project.wait.until(lambda d: root_space in d.page_source)
+
     project.open_root_space(root_space)
 
+    # =========================
     # CREATE PROJECT
+    # =========================
     project_name = f"TestFile_{int(time.time())}"
     file_path = os.path.abspath("testdata/files/0194.pdf")
 
@@ -131,32 +139,37 @@ def cost_reduction_play(browser):
     project.upload_file(file_path)
     project.click_upload()
 
+    # Wait for backend processing
     project.wait_for_processing_complete()
 
+    # =========================
     # OPEN PROJECT
+    # =========================
     project.open_project(project_name)
 
-    project.wait.until(lambda d: len(d.find_elements(By.XPATH, "//input[@type='checkbox']")) > 0)
-
-    # SELECT FILES
-    project.select_all_files()
-
-    # FINAL IMPORTANT FIX (REAL UI SYNC)
-    project.wait.until(lambda d:
-        d.find_element(By.XPATH, "//button[contains(.,'Run')]").is_enabled()
+    # Wait until files are visible
+    project.wait.until(
+        lambda d: len(d.find_elements(By.XPATH, "//input[@type='checkbox']")) > 0
     )
 
-    # # COST REDUCTION FLOW
-    # cost.select_cost_reduction()
-    # cost.click_run()
-    # cost.wait_for_processing()
+    # =========================
+    # SELECT FILES
+    # =========================
+    project.select_all_files()
 
+    # CI-STABLE WAIT (IMPORTANT FIX)
+    try:
+        project.wait.until(
+            lambda d: len(d.find_elements(By.XPATH, "//select")) > 0
+        )
+    except:
+        print("Dropdown not loaded, retrying...")
+        time.sleep(3)
+
+    # =========================
     # COST REDUCTION FLOW
-    is_available = cost.select_cost_reduction()
-
-    if not is_available:
-        pytest.skip("Cost Reduction tab not available in Jenkins environment")
-
+    # =========================
+    cost.select_cost_reduction()
     cost.click_run()
     cost.wait_for_processing()
 

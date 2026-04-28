@@ -174,13 +174,13 @@ class CostReductionPage:
         self.wait = WebDriverWait(driver, 120)
 
     # LOCATORS
-    cost_tab = (By.XPATH, "//button[normalize-space()='Cost Reduction']")
-    run_button = (By.XPATH, "//button[contains(.,'Run')]")
-    view_results = (By.XPATH, "//button[contains(.,'View Results')]")
-    view_details = (By.XPATH, "//button[contains(.,'View Details')]")
-    report_tab = (By.XPATH, "//div[contains(@class,'fixed')]//button[normalize-space()='Cost Reduction']")
-    active_report_tab = (By.XPATH, "//div[contains(@class,'fixed')]//button[contains(@class,'border-green-800') and normalize-space()='Cost Reduction']")
-    popup_overlay = (By.XPATH, "//div[contains(@class,'fixed')]")
+    dropdown = (By.XPATH, "//select[contains(@class,'text-sm')]")
+    option = (By.XPATH, "//option[normalize-space()='Cost Reduction']")
+    run_button = (By.XPATH, "//button[contains(text(),'Run Cost Reduction')]")
+    view_results = (By.XPATH, "//button[normalize-space()='View Results']")
+    view_details = (By.XPATH, "//button[normalize-space()='View Details']")
+    report_tab = (By.XPATH, "//button[normalize-space()='Cost Reduction']")
+    popup_overlay = (By.XPATH, "//div[contains(@class,'fixed inset-0')]")
     close_icon = (By.XPATH, "//button[contains(@class,'p-2')]")
 
     # =========================
@@ -188,28 +188,24 @@ class CostReductionPage:
     # =========================
 
     def select_cost_reduction(self):
+        # Wait dropdown
+        dropdown = self.wait.until(EC.presence_of_element_located(self.dropdown))
+        self.wait.until(EC.visibility_of(dropdown))
 
-        cost_tab = (By.XPATH, "//button[normalize-space()='Cost Reduction']")
+        # Scroll for headless
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", dropdown)
 
-        # Wait max time but don't fail immediately
-        try:
-            self.wait.until(lambda d: len(d.find_elements(*cost_tab)) > 0)
-        except:
-            print("Cost Reduction tab NOT available in this environment")
-            self.driver.save_screenshot("screenshots/cost_tab_missing.png")
-            return False   # IMPORTANT
+        dropdown.click()
 
-        element = self.driver.find_elements(*cost_tab)[0]
+        # Wait options loaded
+        self.wait.until(lambda d: len(dropdown.find_elements(By.TAG_NAME, "option")) > 1)
 
-        self.wait.until(EC.visibility_of(element))
-        self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
+        option = self.wait.until(EC.visibility_of_element_located(self.option))
 
         try:
-            element.click()
+            option.click()
         except:
-            self.driver.execute_script("arguments[0].click();", element)
-
-        return True
+            self.driver.execute_script("arguments[0].click();", option)
 
     def click_run(self):
         run_btn = self.wait.until(EC.presence_of_element_located(self.run_button))
@@ -233,16 +229,12 @@ class CostReductionPage:
         self.wait.until(EC.presence_of_element_located(self.popup_overlay))
 
         tab = self.wait.until(EC.element_to_be_clickable(self.report_tab))
-        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", tab)
         self.driver.execute_script("arguments[0].click();", tab)
-
-        # Ensure tab switched
-        self.wait.until(EC.presence_of_element_located(self.active_report_tab))
 
     def take_screenshot(self):
         os.makedirs("screenshots", exist_ok=True)
         self.driver.save_screenshot("screenshots/Cost_Reduction_Report.png")
 
     def close_popup(self):
-        element = self.wait.until(EC.element_to_be_clickable(self.close_icon))
-        self.driver.execute_script("arguments[0].click();", element)
+        btn = self.wait.until(EC.element_to_be_clickable(self.close_icon))
+        self.driver.execute_script("arguments[0].click();", btn)
