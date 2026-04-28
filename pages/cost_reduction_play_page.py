@@ -162,7 +162,6 @@
 #         self.wait.until(EC.element_to_be_clickable(self.dropdown))
 
 import os
-import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -177,132 +176,45 @@ class CostReductionPage:
     # LOCATORS
     dropdown = (By.XPATH, "//select[contains(@class,'text-sm')]")
     option = (By.XPATH, "//option[normalize-space()='Cost Reduction']")
-    # run_button = (By.XPATH, "//button[contains(text(),'Run Cost Reduction')]")
-    run_button = (By.XPATH, "//button[contains(.,'Run')]")
+    run_button = (By.XPATH, "//button[contains(text(),'Run Cost Reduction')]")
     view_results = (By.XPATH, "//button[normalize-space()='View Results']")
     view_details = (By.XPATH, "//button[normalize-space()='View Details']")
-    # report_tab = (By.XPATH, "//button[normalize-space()='Cost Reduction']")
-    report_tab = (By.XPATH, "//div[contains(@class,'fixed')]//button[normalize-space()='Cost Reduction']")
+    report_tab = (By.XPATH, "//button[normalize-space()='Cost Reduction']")
     popup_overlay = (By.XPATH, "//div[contains(@class,'fixed inset-0')]")
     close_icon = (By.XPATH, "//button[contains(@class,'p-2')]")
 
-    # =========================
     # ACTIONS
-    # =========================
 
     def select_cost_reduction(self):
-
-        # Step 1: Wait for dropdown
-        dropdown = self.wait.until(EC.presence_of_element_located(self.dropdown))
-        self.wait.until(EC.visibility_of(dropdown))
-
-        self.driver.execute_script("arguments[0].scrollIntoView(true);", dropdown)
-
-        # Step 2: Wait until dropdown is enabled (IMPORTANT)
-        self.wait.until(lambda d: dropdown.is_enabled())
-
-        # Step 3: Click dropdown
-        dropdown.click()
-
-        # Step 4: WAIT until options are populated (STRONG FIX)
-        self.wait.until(lambda d: any(
-            opt.text.strip() != "" for opt in d.find_elements(By.XPATH, "//option")
-        ))
-
-        options = self.driver.find_elements(By.XPATH, "//option")
-
-        print("Available options:", [opt.text for opt in options])
-
-        # Step 5: Select correct option
-        for opt in options:
-            if "Cost Reduction" in opt.text:
-                self.driver.execute_script("arguments[0].click();", opt)
-                return
-
-        # Step 6: Debug if not found
-        self.driver.save_screenshot("screenshots/no_option.png")
-        raise Exception("Cost Reduction option NOT found")
+        self.wait.until(EC.element_to_be_clickable(self.dropdown)).click()
+        self.wait.until(EC.element_to_be_clickable(self.option)).click()
 
     def click_run(self):
-
-        # Step 1: Wait until ANY Run button appears
-        run_btn = self.wait.until(
-            lambda d: d.find_element(By.XPATH, "//button[contains(.,'Run')]")
-        )
-
-        # Step 2: Wait until enabled
-        self.wait.until(lambda d: run_btn.is_enabled())
-
-        # Step 3: Scroll (headless fix)
-        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", run_btn)
-
-        # Step 4: Click safely
-        try:
-            run_btn.click()
-        except:
-            self.driver.execute_script("arguments[0].click();", run_btn)
+        self.wait.until(EC.element_to_be_clickable(self.run_button)).click()
 
     def wait_for_processing(self):
-        self.wait.until(EC.element_to_be_clickable(self.view_results))
+        self.wait.until(EC.element_to_be_clickable(self.view_details))
 
     def click_view_results(self):
-        btn = self.wait.until(EC.element_to_be_clickable(self.view_results))
-        self.driver.execute_script("arguments[0].click();", btn)
+        self.wait.until(EC.element_to_be_clickable(self.view_results)).click()
 
     def click_view_details(self):
-        btn = self.wait.until(EC.element_to_be_clickable(self.view_details))
-        self.driver.execute_script("arguments[0].click();", btn)
+        self.wait.until(EC.element_to_be_clickable(self.view_details)).click()
 
     def open_report_tab(self):
+        self.wait.until(EC.visibility_of_element_located(self.popup_overlay))
 
-        # Wait for popup
-        self.wait.until(EC.presence_of_element_located(self.popup_overlay))
-
-        # Get ALL tabs inside popup
-        tabs = self.driver.find_elements(By.XPATH, "//div[contains(@class,'fixed')]//button")
-
-        print("Popup tabs:", [t.text for t in tabs])
-
-        target = None
-        for t in tabs:
-            if t.text.strip() == "Cost Reduction":
-                target = t
-                break
-
-        if not target:
-            self.driver.save_screenshot("screenshots/report_tab_missing.png")
-            raise Exception("Cost Reduction tab not found inside popup")
-
-        # Scroll + click (IMPORTANT)
-        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", target)
-
-        try:
-            target.click()
-        except:
-            self.driver.execute_script("arguments[0].click();", target)
-
-        # VERIFY TAB SWITCHED (CRITICAL)
-        self.wait.until(lambda d:
-            "border-green" in target.get_attribute("class")
-    )
+        element = self.wait.until(EC.element_to_be_clickable(self.report_tab))
+        self.driver.execute_script("arguments[0].click();", element)
 
     def take_screenshot(self):
-        folder = os.path.abspath("screenshots")
-        os.makedirs(folder, exist_ok=True)
-
-        file_path = os.path.join(folder, f"Cost_Reduction_{int(time.time())}.png")
-
-        success = self.driver.save_screenshot(file_path)
-
-        if success:
-            print(f"Screenshot successfully saved at: {file_path}")
-        else:
-            print("Screenshot FAILED to save")
-
-        # Extra verification
-        if not os.path.exists(file_path):
-            raise Exception("Screenshot file NOT found after saving!")
+        os.makedirs("screenshots", exist_ok=True)
+        self.driver.save_screenshot("screenshots/Cost_Reduction_Report.png")
 
     def close_popup(self):
-        btn = self.wait.until(EC.element_to_be_clickable(self.close_icon))
-        self.driver.execute_script("arguments[0].click();", btn)
+        element = self.wait.until(EC.element_to_be_clickable(self.close_icon))
+        self.driver.execute_script("arguments[0].click();", element)
+
+        # Wait for underlying page to be clickable again
+        self.wait.until(EC.element_to_be_clickable(self.dropdown))
+
