@@ -65,9 +65,16 @@ def cost_reduction_play(browser):
     # wait until files appear
     project.wait.until(lambda d: len(d.find_elements(By.XPATH, "//input[@type='checkbox']")) > 0)
 
+    # project.select_all_files()
+
+    # # # Perform Cost Reduction Play
+    # cost.select_cost_reduction()
+
     project.select_all_files()
 
-    # # Perform Cost Reduction Play
+    # WAIT FOR UI STATE (THIS IS THE REAL FIX)
+    project.wait.until(lambda d: "Processing" not in d.page_source)
+
     cost.select_cost_reduction()
         
     cost.click_run()
