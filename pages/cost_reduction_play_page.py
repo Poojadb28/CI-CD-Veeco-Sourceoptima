@@ -221,11 +221,21 @@ class CostReductionPage:
         raise Exception("Cost Reduction option NOT found")
 
     def click_run(self):
+
+        # Step 1: Wait for button to appear
         run_btn = self.wait.until(EC.presence_of_element_located(self.run_button))
+
+        # Step 2: WAIT until button is ENABLED (CRITICAL FIX)
         self.wait.until(lambda d: run_btn.is_enabled())
 
+        # Step 3: Scroll (important for headless Jenkins)
         self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", run_btn)
-        self.driver.execute_script("arguments[0].click();", run_btn)
+
+        # Step 4: Click safely
+        try:
+            run_btn.click()
+        except:
+            self.driver.execute_script("arguments[0].click();", run_btn)
 
     def wait_for_processing(self):
         self.wait.until(EC.element_to_be_clickable(self.view_results))
