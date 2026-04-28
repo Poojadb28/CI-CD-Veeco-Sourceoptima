@@ -47,21 +47,28 @@ class CostReductionPage:
 
     def select_cost_reduction(self):
 
-        # Step 1: Wait for page to stabilize (IMPORTANT in CI)
+        # Step 1: Wait for page load
         self.wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
 
-        # Step 2: Click Cost Reduction tab (MANDATORY)
+        # Step 2: Wait until loader/spinner disappears (VERY IMPORTANT)
+        try:
+            self.wait.until(EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class,'loader')]")))
+        except:
+            pass  # if no loader, continue
+
+        # Step 3: Wait until files are actually stable
+        self.wait.until(lambda d: len(d.find_elements(By.XPATH, "//input[@type='checkbox']")) > 0)
+
+        # Step 4: Now wait for Cost Reduction tab
         cost_tab = (By.XPATH, "//button[normalize-space()='Cost Reduction']")
-        self.wait.until(EC.element_to_be_clickable(cost_tab)).click()
 
-        # Step 3: Wait for dropdown to appear (NOT presence — visibility)
-        self.wait.until(EC.visibility_of_element_located(self.option))
+        element = self.wait.until(EC.presence_of_element_located(cost_tab))
+        self.wait.until(EC.visibility_of(element))
 
-        # Step 4: Now interact safely
-        element = self.wait.until(EC.visibility_of_element_located(self.option))
-
+        # Scroll (important in headless)
         self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
 
+        # Click safely
         try:
             element.click()
         except:

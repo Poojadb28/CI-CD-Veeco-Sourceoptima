@@ -64,11 +64,19 @@ def cost_reduction_play(browser):
     # wait until files appear
     project.wait.until(lambda d: len(d.find_elements(By.XPATH, "//input[@type='checkbox']")) > 0)
 
+    # project.select_all_files()
+
+    # # Perform Cost Reduction Play
+    # cost.select_cost_reduction()
     project.select_all_files()
 
-    # Perform Cost Reduction Play
+    #  WAIT FOR UI TO BE READY (this is the missing piece)
+    project.wait.until(lambda d: 
+        d.find_element(By.XPATH, "//button[normalize-space()='Cost Reduction']").is_enabled()
+    )
+
     cost.select_cost_reduction()
-    
+        
     cost.click_run()
     cost.wait_for_processing()
 
