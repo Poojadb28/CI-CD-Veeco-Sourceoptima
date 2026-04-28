@@ -167,8 +167,9 @@ pipeline {
         }
 
         stage('Run Tests') {
-            steps {
-                bat """
+    steps {
+        bat """
+set PYTHONIOENCODING=utf-8
 %PYTHON% -m pytest tests/plays/test_cost_reduction_play.py ^
 -v ^
 --headless ^
@@ -177,8 +178,8 @@ pipeline {
 --capture=sys ^
 --reruns 1
 """
-            }
-        }
+    }
+}
     }
 
     post {

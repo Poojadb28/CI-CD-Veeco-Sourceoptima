@@ -189,31 +189,36 @@ class CostReductionPage:
 
     def select_cost_reduction(self):
 
+        # Step 1: Wait for dropdown
         dropdown = self.wait.until(EC.presence_of_element_located(self.dropdown))
         self.wait.until(EC.visibility_of(dropdown))
 
         self.driver.execute_script("arguments[0].scrollIntoView(true);", dropdown)
+
+        # Step 2: Wait until dropdown is enabled (IMPORTANT)
+        self.wait.until(lambda d: dropdown.is_enabled())
+
+        # Step 3: Click dropdown
         dropdown.click()
 
-        # CRITICAL FIX → wait until dropdown has REAL options
-        self.wait.until(lambda d: len(d.find_elements(By.XPATH, "//option")) > 1)
+        # Step 4: WAIT until options are populated (STRONG FIX)
+        self.wait.until(lambda d: any(
+            opt.text.strip() != "" for opt in d.find_elements(By.XPATH, "//option")
+        ))
 
         options = self.driver.find_elements(By.XPATH, "//option")
 
-        # Debug (important)
         print("Available options:", [opt.text for opt in options])
 
-        target_option = None
+        # Step 5: Select correct option
         for opt in options:
             if "Cost Reduction" in opt.text:
-                target_option = opt
-                break
+                self.driver.execute_script("arguments[0].click();", opt)
+                return
 
-        if not target_option:
-            self.driver.save_screenshot("screenshots/no_cost_option.png")
-            raise Exception("Cost Reduction option not available in dropdown")
-
-        self.driver.execute_script("arguments[0].click();", target_option)
+        # Step 6: Debug if not found
+        self.driver.save_screenshot("screenshots/no_option.png")
+        raise Exception("Cost Reduction option NOT found")
 
     def click_run(self):
         run_btn = self.wait.until(EC.presence_of_element_located(self.run_button))

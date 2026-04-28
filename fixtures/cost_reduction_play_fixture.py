@@ -155,11 +155,16 @@ def cost_reduction_play(browser):
     # =========================
     # SELECT FILES
     # =========================
+    # project.select_all_files()
+
+    # time.sleep(2) 
     project.select_all_files()
 
-    # WAIT FOR BACKEND TO POPULATE DROPDOWN
-    project.wait.until(lambda d: len(d.find_elements(By.XPATH, "//option")) > 1)
+    # WAIT FOR UI TO BE READY AFTER FILE SELECTION
+    project.wait.until(lambda d: len(d.find_elements(By.XPATH, "//select")) > 0)
 
+    # Optional extra stability for CI
+    time.sleep(2) 
     # =========================
     # COST REDUCTION FLOW
     # =========================
