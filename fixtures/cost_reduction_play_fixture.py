@@ -157,14 +157,8 @@ def cost_reduction_play(browser):
     # =========================
     project.select_all_files()
 
-    # CI-STABLE WAIT (IMPORTANT FIX)
-    try:
-        project.wait.until(
-            lambda d: len(d.find_elements(By.XPATH, "//select")) > 0
-        )
-    except:
-        print("Dropdown not loaded, retrying...")
-        time.sleep(3)
+    # WAIT FOR BACKEND TO POPULATE DROPDOWN
+    project.wait.until(lambda d: len(d.find_elements(By.XPATH, "//option")) > 1)
 
     # =========================
     # COST REDUCTION FLOW
