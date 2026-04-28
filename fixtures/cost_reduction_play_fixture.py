@@ -72,8 +72,10 @@ def cost_reduction_play(browser):
 
     project.select_all_files()
 
-    # WAIT FOR UI STATE (THIS IS THE REAL FIX)
-    project.wait.until(lambda d: "Processing" not in d.page_source)
+    # REAL WAIT 
+    project.wait.until(lambda d: 
+        len(d.find_elements(By.XPATH, "//button[normalize-space()='Cost Reduction']")) > 0
+    )
 
     cost.select_cost_reduction()
         
