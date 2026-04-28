@@ -182,7 +182,7 @@ class CostReductionPage:
     view_results = (By.XPATH, "//button[normalize-space()='View Results']")
     view_details = (By.XPATH, "//button[normalize-space()='View Details']")
     # report_tab = (By.XPATH, "//button[normalize-space()='Cost Reduction']")
-    report_tab = (By.XPATH, "//button[contains(.,'Report') or contains(.,'Cost')]")
+    report_tab = (By.XPATH, "//div[contains(@class,'fixed')]//button[normalize-space()='Cost Reduction']")
     popup_overlay = (By.XPATH, "//div[contains(@class,'fixed inset-0')]")
     close_icon = (By.XPATH, "//button[contains(@class,'p-2')]")
 
@@ -258,22 +258,33 @@ class CostReductionPage:
         # Wait for popup
         self.wait.until(EC.presence_of_element_located(self.popup_overlay))
 
-        # Find all buttons in popup
-        buttons = self.driver.find_elements(By.XPATH, "//button")
+        # Get ALL tabs inside popup
+        tabs = self.driver.find_elements(By.XPATH, "//div[contains(@class,'fixed')]//button")
 
-        print("Available popup buttons:", [b.text for b in buttons])
+        print("Popup tabs:", [t.text for t in tabs])
 
         target = None
-        for b in buttons:
-            if "Report" in b.text or "Cost" in b.text:
-                target = b
+        for t in tabs:
+            if t.text.strip() == "Cost Reduction":
+                target = t
                 break
 
         if not target:
             self.driver.save_screenshot("screenshots/report_tab_missing.png")
-            raise Exception("Report tab not found in popup")
+            raise Exception("Cost Reduction tab not found inside popup")
 
-        self.driver.execute_script("arguments[0].click();", target)
+        # Scroll + click (IMPORTANT)
+        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", target)
+
+        try:
+            target.click()
+        except:
+            self.driver.execute_script("arguments[0].click();", target)
+
+        # VERIFY TAB SWITCHED (CRITICAL)
+        self.wait.until(lambda d:
+            "border-green" in target.get_attribute("class")
+    )
 
     def take_screenshot(self):
         folder = os.path.abspath("screenshots")
