@@ -185,6 +185,8 @@ set PYTHONIOENCODING=utf-8
     post {
 
         always {
+            archiveArtifacts artifacts: 'screenshots/*.png', allowEmptyArchive: true
+            
             publishHTML(target: [
                 reportDir: 'reports',
                 reportFiles: 'report.html',

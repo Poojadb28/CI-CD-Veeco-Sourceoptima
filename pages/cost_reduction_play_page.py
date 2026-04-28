@@ -162,6 +162,7 @@
 #         self.wait.until(EC.element_to_be_clickable(self.dropdown))
 
 import os
+import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -275,15 +276,13 @@ class CostReductionPage:
         self.driver.execute_script("arguments[0].click();", target)
 
     def take_screenshot(self):
-        import os, time
-
         os.makedirs("screenshots", exist_ok=True)
 
-        file_path = f"screenshots/Cost_Reduction_{int(time.time())}.png"
+        file_path = os.path.abspath(f"screenshots/Cost_Reduction_{int(time.time())}.png")
 
         self.driver.save_screenshot(file_path)
 
-        print(f"Screenshot saved: {file_path}")
+        print(f"Screenshot saved at: {file_path}")
 
     def close_popup(self):
         btn = self.wait.until(EC.element_to_be_clickable(self.close_icon))
