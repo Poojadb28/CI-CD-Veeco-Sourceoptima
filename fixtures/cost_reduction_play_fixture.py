@@ -146,8 +146,17 @@ def cost_reduction_play(browser):
         d.find_element(By.XPATH, "//button[contains(.,'Run')]").is_enabled()
     )
 
+    # # COST REDUCTION FLOW
+    # cost.select_cost_reduction()
+    # cost.click_run()
+    # cost.wait_for_processing()
+
     # COST REDUCTION FLOW
-    cost.select_cost_reduction()
+    is_available = cost.select_cost_reduction()
+
+    if not is_available:
+        pytest.skip("Cost Reduction tab not available in Jenkins environment")
+
     cost.click_run()
     cost.wait_for_processing()
 

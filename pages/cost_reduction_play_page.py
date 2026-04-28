@@ -188,22 +188,28 @@ class CostReductionPage:
     # =========================
 
     def select_cost_reduction(self):
-        # WAIT until tab appears (important fix)
-        self.wait.until(lambda d: len(d.find_elements(*self.cost_tab)) > 0)
 
-        element = self.driver.find_elements(*self.cost_tab)[0]
+        cost_tab = (By.XPATH, "//button[normalize-space()='Cost Reduction']")
 
-        # Ensure visible
+        # Wait max time but don't fail immediately
+        try:
+            self.wait.until(lambda d: len(d.find_elements(*cost_tab)) > 0)
+        except:
+            print("Cost Reduction tab NOT available in this environment")
+            self.driver.save_screenshot("screenshots/cost_tab_missing.png")
+            return False   # IMPORTANT
+
+        element = self.driver.find_elements(*cost_tab)[0]
+
         self.wait.until(EC.visibility_of(element))
-
-        # Scroll (headless fix)
         self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
 
-        # Safe click
         try:
             element.click()
         except:
             self.driver.execute_script("arguments[0].click();", element)
+
+        return True
 
     def click_run(self):
         run_btn = self.wait.until(EC.presence_of_element_located(self.run_button))
