@@ -170,7 +170,7 @@ pipeline {
     steps {
         bat """
 set PYTHONIOENCODING=utf-8
-%PYTHON% -m pytest tests/plays/test_cost_reduction_play.py ^
+%PYTHON% -m pytest tests/ ^
 -v ^
 --headless ^
 --html=reports/report.html ^
@@ -186,7 +186,7 @@ set PYTHONIOENCODING=utf-8
 
         always {
             archiveArtifacts artifacts: 'screenshots/*.png', allowEmptyArchive: true
-            
+
             publishHTML(target: [
                 reportDir: 'reports',
                 reportFiles: 'report.html',
