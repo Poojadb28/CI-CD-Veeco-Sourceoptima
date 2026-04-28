@@ -25,3 +25,4 @@ def available_plays(browser):
     ]
 
     return admin, play_name
+

@@ -8,7 +8,7 @@ class TariffPage:
 
     def __init__(self, driver):
         self.driver = driver
-        self.wait = WebDriverWait(driver, 120)
+        self.wait = WebDriverWait(driver, 180)
 
     # ---------------- LOCATORS ----------------
 
@@ -99,31 +99,74 @@ class TariffPage:
 
     #     assert new_files, "BOM file not downloaded"
 
-    def export_bom(self, download_dir):
+    # def export_bom(self, download_dir):
 
+    #     import time, os
+
+    #     before_files = set(os.listdir(download_dir))
+
+    #     button = self.wait.until(EC.element_to_be_clickable(self.bom_export_btn))
+    #     self.driver.execute_script("arguments[0].click();", button)
+
+    #     end_time = time.time() + 180
+
+    #     while time.time() < end_time:
+
+    #         after_files = set(os.listdir(download_dir))
+    #         new_files = after_files - before_files
+
+    #         # ONLY accept fully downloaded files
+    #         completed = [
+    #             f for f in new_files
+    #             if f.endswith(".xlsx")
+    #         ]
+
+    #         # ignore .crdownload completely
+    #         if completed:
+    #             print("BOM Downloaded:", completed)
+    #             return
+
+    #         time.sleep(2)
+
+    #     raise Exception("BOM download did not complete")
+
+    def export_bom(self, download_dir):
         import time, os
 
-        before_files = set(os.listdir(download_dir))
+        # Step 1: Ensure page fully loaded
+        self.wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
 
-        button = self.wait.until(EC.element_to_be_clickable(self.bom_export_btn))
-        self.driver.execute_script("arguments[0].click();", button)
+        # Step 2: Wait for button presence
+        element = self.wait.until(EC.presence_of_element_located(self.bom_export_btn))
 
+        # Step 3: Scroll into view
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+
+        # Step 4: Wait for visibility
+        self.wait.until(EC.visibility_of(element))
+
+        # Step 5: Wait until clickable
+        self.wait.until(EC.element_to_be_clickable(self.bom_export_btn))
+
+        # Step 6: Click using JS (important for Jenkins)
+        self.driver.execute_script("arguments[0].click();", element)
+
+        print("Clicked BOM Export")
+
+        # Step 7: Wait for download start + completion
         end_time = time.time() + 180
 
         while time.time() < end_time:
+            files = os.listdir(download_dir)
 
-            after_files = set(os.listdir(download_dir))
-            new_files = after_files - before_files
-
-            # ONLY accept fully downloaded files
-            completed = [
-                f for f in new_files
-                if f.endswith(".xlsx")
+            # ignore temp files
+            completed_files = [
+                f for f in files
+                if f.endswith(".xlsx") and not f.endswith(".crdownload")
             ]
 
-            # ignore .crdownload completely
-            if completed:
-                print("BOM Downloaded:", completed)
+            if completed_files:
+                print("BOM Downloaded:", completed_files)
                 return
 
             time.sleep(2)

@@ -20,4 +20,3 @@ def test_available_plays_enable_disable(available_plays):
         message = admin.wait_for_enable_message()
         assert "enabled" in message.lower()
 
-        

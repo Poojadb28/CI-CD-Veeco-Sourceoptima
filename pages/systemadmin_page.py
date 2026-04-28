@@ -87,6 +87,9 @@ class SystemAdminPage:
         # IMPORTANT: wait for state change
         self.wait.until(lambda d: toggle.is_displayed())
 
+        time.sleep(2)
+    
+
     def get_disable_message(self):
         return self.get_text(self.DISABLE_MSG)
     
@@ -113,6 +116,19 @@ class SystemAdminPage:
     def get_enable_message(self):
         return self.get_text(self.ENABLE_MSG)
     
+    # def is_play_enabled(self, play_name):
+
+    #     status = self.wait.until(
+    #         EC.visibility_of_element_located((
+    #             By.XPATH,
+    #             f"//h3[normalize-space()='{play_name}']"
+    #             f"/ancestor::div[contains(@class,'rounded-lg')]"
+    #             f"//span[contains(@class,'rounded-full')]"
+    #         ))
+    #     )
+
+    #     return status.text.strip().lower() == "enabled"
+        
     
     #------------Credit History Download----------------#
     # Export
