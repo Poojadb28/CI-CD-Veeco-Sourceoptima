@@ -176,7 +176,8 @@ class CostReductionPage:
     # LOCATORS
     dropdown = (By.XPATH, "//select[contains(@class,'text-sm')]")
     option = (By.XPATH, "//option[normalize-space()='Cost Reduction']")
-    run_button = (By.XPATH, "//button[contains(text(),'Run Cost Reduction')]")
+    # run_button = (By.XPATH, "//button[contains(text(),'Run Cost Reduction')]")
+    run_button = (By.XPATH, "//button[contains(.,'Run')]")
     view_results = (By.XPATH, "//button[normalize-space()='View Results']")
     view_details = (By.XPATH, "//button[normalize-space()='View Details']")
     report_tab = (By.XPATH, "//button[normalize-space()='Cost Reduction']")
@@ -222,13 +223,15 @@ class CostReductionPage:
 
     def click_run(self):
 
-        # Step 1: Wait for button to appear
-        run_btn = self.wait.until(EC.presence_of_element_located(self.run_button))
+        # Step 1: Wait until ANY Run button appears
+        run_btn = self.wait.until(
+            lambda d: d.find_element(By.XPATH, "//button[contains(.,'Run')]")
+        )
 
-        # Step 2: WAIT until button is ENABLED (CRITICAL FIX)
+        # Step 2: Wait until enabled
         self.wait.until(lambda d: run_btn.is_enabled())
 
-        # Step 3: Scroll (important for headless Jenkins)
+        # Step 3: Scroll (headless fix)
         self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", run_btn)
 
         # Step 4: Click safely
