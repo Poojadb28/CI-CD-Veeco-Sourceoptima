@@ -180,7 +180,8 @@ class CostReductionPage:
     run_button = (By.XPATH, "//button[contains(.,'Run')]")
     view_results = (By.XPATH, "//button[normalize-space()='View Results']")
     view_details = (By.XPATH, "//button[normalize-space()='View Details']")
-    report_tab = (By.XPATH, "//button[normalize-space()='Cost Reduction']")
+    # report_tab = (By.XPATH, "//button[normalize-space()='Cost Reduction']")
+    report_tab = (By.XPATH, "//button[contains(.,'Report') or contains(.,'Cost')]")
     popup_overlay = (By.XPATH, "//div[contains(@class,'fixed inset-0')]")
     close_icon = (By.XPATH, "//button[contains(@class,'p-2')]")
 
@@ -252,10 +253,26 @@ class CostReductionPage:
         self.driver.execute_script("arguments[0].click();", btn)
 
     def open_report_tab(self):
+
+        # Wait for popup
         self.wait.until(EC.presence_of_element_located(self.popup_overlay))
 
-        tab = self.wait.until(EC.element_to_be_clickable(self.report_tab))
-        self.driver.execute_script("arguments[0].click();", tab)
+        # Find all buttons in popup
+        buttons = self.driver.find_elements(By.XPATH, "//button")
+
+        print("Available popup buttons:", [b.text for b in buttons])
+
+        target = None
+        for b in buttons:
+            if "Report" in b.text or "Cost" in b.text:
+                target = b
+                break
+
+        if not target:
+            self.driver.save_screenshot("screenshots/report_tab_missing.png")
+            raise Exception("Report tab not found in popup")
+
+        self.driver.execute_script("arguments[0].click();", target)
 
     def take_screenshot(self):
         os.makedirs("screenshots", exist_ok=True)
