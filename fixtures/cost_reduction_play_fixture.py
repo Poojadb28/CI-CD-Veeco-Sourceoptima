@@ -3,6 +3,7 @@ import time
 import pytest
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from pages.systemadmin_login_page import LoginPage
 from pages.project_page import ProjectPage
 from pages.cost_reduction_play_page import CostReductionPage
@@ -64,17 +65,9 @@ def cost_reduction_play(browser):
     # wait until files appear
     project.wait.until(lambda d: len(d.find_elements(By.XPATH, "//input[@type='checkbox']")) > 0)
 
-    # project.select_all_files()
-
-    # # Perform Cost Reduction Play
-    # cost.select_cost_reduction()
     project.select_all_files()
 
-    #  WAIT FOR UI TO BE READY (this is the missing piece)
-    project.wait.until(lambda d: 
-        d.find_element(By.XPATH, "//button[normalize-space()='Cost Reduction']").is_enabled()
-    )
-
+    # # Perform Cost Reduction Play
     cost.select_cost_reduction()
         
     cost.click_run()

@@ -45,30 +45,49 @@ class CostReductionPage:
     #         # Fallback to JS click (very common CI fix)
     #         self.driver.execute_script("arguments[0].click();", element)
 
+    # def select_cost_reduction(self):
+
+    #     # Step 1: Wait for page load
+    #     self.wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
+
+    #     # Step 2: Wait until loader/spinner disappears (VERY IMPORTANT)
+    #     try:
+    #         self.wait.until(EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class,'loader')]")))
+    #     except:
+    #         pass  # if no loader, continue
+
+    #     # Step 3: Wait until files are actually stable
+    #     self.wait.until(lambda d: len(d.find_elements(By.XPATH, "//input[@type='checkbox']")) > 0)
+
+    #     # Step 4: Now wait for Cost Reduction tab
+    #     cost_tab = (By.XPATH, "//button[normalize-space()='Cost Reduction']")
+
+    #     element = self.wait.until(EC.presence_of_element_located(cost_tab))
+    #     self.wait.until(EC.visibility_of(element))
+
+    #     # Scroll (important in headless)
+    #     self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
+
+    #     # Click safely
+    #     try:
+    #         element.click()
+    #     except:
+    #         self.driver.execute_script("arguments[0].click();", element)
+
     def select_cost_reduction(self):
 
-        # Step 1: Wait for page load
-        self.wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
-
-        # Step 2: Wait until loader/spinner disappears (VERY IMPORTANT)
-        try:
-            self.wait.until(EC.invisibility_of_element_located((By.XPATH, "//div[contains(@class,'loader')]")))
-        except:
-            pass  # if no loader, continue
-
-        # Step 3: Wait until files are actually stable
-        self.wait.until(lambda d: len(d.find_elements(By.XPATH, "//input[@type='checkbox']")) > 0)
-
-        # Step 4: Now wait for Cost Reduction tab
         cost_tab = (By.XPATH, "//button[normalize-space()='Cost Reduction']")
 
+        # Wait until element exists
         element = self.wait.until(EC.presence_of_element_located(cost_tab))
+
+        # Wait until visible
         self.wait.until(EC.visibility_of(element))
 
-        # Scroll (important in headless)
+        # Scroll (important for headless Jenkins)
         self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
 
-        # Click safely
+        # Safe click
         try:
             element.click()
         except:
