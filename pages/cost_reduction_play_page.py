@@ -276,13 +276,21 @@ class CostReductionPage:
         self.driver.execute_script("arguments[0].click();", target)
 
     def take_screenshot(self):
-        os.makedirs("screenshots", exist_ok=True)
+        folder = os.path.abspath("screenshots")
+        os.makedirs(folder, exist_ok=True)
 
-        file_path = os.path.abspath(f"screenshots/Cost_Reduction_{int(time.time())}.png")
+        file_path = os.path.join(folder, f"Cost_Reduction_{int(time.time())}.png")
 
-        self.driver.save_screenshot(file_path)
+        success = self.driver.save_screenshot(file_path)
 
-        print(f"Screenshot saved at: {file_path}")
+        if success:
+            print(f"Screenshot successfully saved at: {file_path}")
+        else:
+            print("Screenshot FAILED to save")
+
+        # Extra verification
+        if not os.path.exists(file_path):
+            raise Exception("Screenshot file NOT found after saving!")
 
     def close_popup(self):
         btn = self.wait.until(EC.element_to_be_clickable(self.close_icon))
