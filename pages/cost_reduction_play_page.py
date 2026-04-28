@@ -275,8 +275,15 @@ class CostReductionPage:
         self.driver.execute_script("arguments[0].click();", target)
 
     def take_screenshot(self):
+        import os, time
+
         os.makedirs("screenshots", exist_ok=True)
-        self.driver.save_screenshot("screenshots/Cost_Reduction_Report.png")
+
+        file_path = f"screenshots/Cost_Reduction_{int(time.time())}.png"
+
+        self.driver.save_screenshot(file_path)
+
+        print(f"Screenshot saved: {file_path}")
 
     def close_popup(self):
         btn = self.wait.until(EC.element_to_be_clickable(self.close_icon))
