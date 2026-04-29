@@ -3,6 +3,8 @@ import time
 import os
 
 from pages.systemadmin_login_page import LoginPage
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from pages.project_page import ProjectPage
 
 
@@ -31,7 +33,12 @@ def create_project(browser):
     project.select_color()
     project.click_create_space()
 
-    project.wait.until(lambda d: root_space in d.page_source)
+    # project.wait.until(lambda d: root_space in d.page_source)
+    project.wait_for_page_load()
+
+    project.wait.until(
+        EC.visibility_of_element_located((By.XPATH, f"//*[text()='{root_space}']"))
+    )
 
     project.open_root_space(root_space)
 

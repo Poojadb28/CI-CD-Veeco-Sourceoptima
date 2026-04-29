@@ -290,19 +290,34 @@ class ProjectPage:
         field.send_keys(name)
 
 
+    # def upload_file(self, file_path):
+    #     import os
+
+    #     file_path = os.path.abspath(file_path)
+
+    #     upload = self.wait.until(EC.visibility_of_element_located(
+    #         (By.XPATH, "//input[@type='file']")
+    #     ))
+
+    #     # IMPORTANT for hidden input
+    #     self.driver.execute_script("arguments[0].style.display='block';", upload)
+
+    #     upload.send_keys(file_path)
+
     def upload_file(self, file_path):
-        import os
+        self.wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
 
-        file_path = os.path.abspath(file_path)
+        upload = self.wait.until(
+            EC.presence_of_element_located(self.file_upload_input)
+        )
 
-        upload = self.wait.until(EC.visibility_of_element_located(
-            (By.XPATH, "//input[@type='file']")
-        ))
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", upload)
 
-        # IMPORTANT for hidden input
-        self.driver.execute_script("arguments[0].style.display='block';", upload)
+        self.wait.until(EC.visibility_of(upload))
 
         upload.send_keys(file_path)
+
+        print("File uploaded successfully")
 
 
     def click_upload(self):

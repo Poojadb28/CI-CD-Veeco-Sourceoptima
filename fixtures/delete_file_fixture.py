@@ -3,6 +3,8 @@ import time
 import pytest
 
 from pages.systemadmin_login_page import LoginPage
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 from pages.project_page import ProjectPage
 
 
@@ -35,8 +37,23 @@ def delete_file_setup(browser):
     project_name = f"TestFile_{int(time.time())}"
     file_path = os.path.abspath("testdata/files/0194.pdf")
 
-    project.click_new_upload()
+    # project.click_new_upload()
+    # project.enter_project_name(project_name)
+    # project.upload_file(file_path)
+    
+
+    # WAIT for upload popup
+    project.wait.until(
+        EC.visibility_of_element_located(project.upload_popup_locator)
+    )
+
     project.enter_project_name(project_name)
+
+    # WAIT for file input before upload
+    project.wait.until(
+        EC.presence_of_element_located(project.file_upload_input)
+    )
+    project.click_new_upload()
     project.upload_file(file_path)
     project.click_upload()
 

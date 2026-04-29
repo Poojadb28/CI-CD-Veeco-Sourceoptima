@@ -98,7 +98,7 @@ def cost_reduction_play(browser):
 
     login = LoginPage(browser)
     login.login("prekshita@sourceoptima.com", "aspl1234")
-    login.wait_for_page_load()
+    # login.wait_for_page_load()
 
     project = ProjectPage(browser)
     cost = CostReductionPage(browser)
@@ -107,15 +107,15 @@ def cost_reduction_play(browser):
     # NAVIGATE TO PROJECTS
     # =========================
     project.click_projects()
-    project.wait_for_page_load()
+    # project.wait_for_page_load()
 
     # =========================
     # CREATE ROOT SPACE
     # =========================
     project.right_click_on_canvas()
-    project.wait_for_page_load()
+    # project.wait_for_page_load()
     project.click_new_root_space()
-    project.wait_for_page_load()
+    # project.wait_for_page_load()
 
     root_space = f"TestSpace_{int(time.time())}"
 
@@ -123,13 +123,13 @@ def cost_reduction_play(browser):
     project.open_icon_selector()
     project.select_color()
     project.click_create_space()
-    project.wait_for_page_load()
+    # project.wait_for_page_load()
 
     # Wait for space creation
     project.wait.until(lambda d: root_space in d.page_source)
 
     project.open_root_space(root_space)
-    project.wait_for_page_load()
+    # project.wait_for_page_load()
     # =========================
     # CREATE PROJECT
     # =========================
@@ -151,7 +151,7 @@ def cost_reduction_play(browser):
     # OPEN PROJECT
     # =========================
     project.open_project(project_name)
-    project.wait_for_page_load()
+    # project.wait_for_page_load()
 
     # Wait until files are visible
     project.wait.until(
@@ -165,7 +165,7 @@ def cost_reduction_play(browser):
 
     # time.sleep(2) 
     project.select_all_files()
-    project.wait_for_page_load()
+    # project.wait_for_page_load()
 
     # WAIT FOR UI TO BE READY AFTER FILE SELECTION
     project.wait.until(lambda d: len(d.find_elements(By.XPATH, "//select")) > 0)
@@ -178,6 +178,6 @@ def cost_reduction_play(browser):
     cost.select_cost_reduction()
     cost.click_run()
     cost.wait_for_processing()
-    cost.wait_for_page_load()
+    # cost.wait_for_page_load()
 
     return cost
