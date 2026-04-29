@@ -9,6 +9,11 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 class ProjectPage:
 
+    # upload_popup_locator = (By.XPATH, "//button[normalize-space()='New Upload']")
+    # file_upload_input = (By.XPATH, "//input[@type='file']")
+    upload_popup_locator = (By.XPATH, "//button[normalize-space()='New Upload']")
+    file_upload_input = (By.XPATH, "//input[@type='file']")
+
     def __init__(self, driver):
         self.driver = driver
         self.wait = WebDriverWait(driver, 30)
@@ -19,7 +24,23 @@ class ProjectPage:
         )
 
     def click_projects(self):
-        self.wait.until(EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Projects']"))).click()
+        # self.wait.until(EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Projects']"))).click()
+        projects = self.wait.until(EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Projects']")))
+        self.driver.execute_script("arguments[0].click();", projects)
+        self.wait_for_page_load()
+        # self.wait.until(
+        #     lambda d: "Organization Structure" in d.find_element(By.TAG_NAME, "body").text
+        # )
+        self.wait.until(
+            lambda d: "OrgChart" in d.current_url
+            or "Organization Structure" in d.find_element(By.TAG_NAME, "body").text
+        )
+        # self.wait.until(
+        #     lambda d: "Loading" not in d.find_element(By.TAG_NAME, "body").text
+        # )
+        self.wait.until(
+            lambda d: "Loading" not in d.find_element(By.TAG_NAME, "body").text
+        )
 
     # def right_click_on_canvas(self):
     #     page_body = self.wait.until(EC.presence_of_element_located((By.XPATH, "//div[contains(@class,'flex-1 overflow-auto p-8 relative')]")))
@@ -27,17 +48,64 @@ class ProjectPage:
 
     def right_click_on_canvas(self):
 
-        canvas = self.wait.until(EC.visibility_of_element_located(
-            (By.XPATH, "//div[contains(@class,'flex-1')]")
-        ))
+        # canvas = self.wait.until(EC.visibility_of_element_located(
+        #     (By.XPATH, "//div[contains(@class,'flex-1')]")
+        # ))
+        #
+        # self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", canvas)
+        #
+        # ActionChains(self.driver)\
+        #     .move_to_element(canvas)\
+        #     .pause(1)\
+        #     .context_click(canvas)\
+        #     .perform()
+
+        canvas_locators = [
+            (By.XPATH, "//div[contains(@class,'react-flow')]"),
+            (By.XPATH, "//div[contains(@class,'overflow-auto') and contains(@class,'relative')]"),
+            (By.XPATH, "//div[contains(@class,'flex-1') and contains(@class,'relative')]"),
+            (By.XPATH, "//main"),
+        ]
+
+        canvas = None
+        for locator in canvas_locators:
+            elements = self.driver.find_elements(*locator)
+            visible = [element for element in elements if element.is_displayed()]
+            if visible:
+                canvas = visible[-1]
+                break
+
+        if canvas is None:
+            canvas = self.wait.until(EC.visibility_of_element_located(
+                (By.XPATH, "//div[contains(@class,'flex-1')]")
+            ))
 
         self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", canvas)
 
-        ActionChains(self.driver)\
-            .move_to_element(canvas)\
-            .pause(1)\
-            .context_click(canvas)\
-            .perform()
+        rect = canvas.rect
+        try:
+            ActionChains(self.driver)\
+                .move_to_element_with_offset(canvas, int(rect["width"] * 0.65), int(rect["height"] * 0.25))\
+                .pause(1)\
+                .context_click()\
+                .perform()
+        except Exception:
+            self.driver.execute_script(
+                """
+                const el = arguments[0];
+                const rect = el.getBoundingClientRect();
+                const x = rect.left + rect.width * 0.65;
+                const y = rect.top + rect.height * 0.25;
+                el.dispatchEvent(new MouseEvent('contextmenu', {
+                    bubbles: true,
+                    cancelable: true,
+                    view: window,
+                    clientX: x,
+                    clientY: y
+                }));
+                """,
+                canvas
+            )
 
         # VERY IMPORTANT: wait for menu to appear
         self.wait.until(EC.visibility_of_element_located(
@@ -283,6 +351,14 @@ class ProjectPage:
 
 
     def enter_project_name(self, name):
+        # field = self.wait.until(EC.visibility_of_element_located(
+        #     (By.XPATH, "//input[@placeholder='Enter project name']")
+        # ))
+        # field.clear()
+        # field.send_keys(name)
+        if not self.driver.find_elements(By.XPATH, "//input[@placeholder='Enter project name']"):
+            self.click_new_upload()
+
         field = self.wait.until(EC.visibility_of_element_located(
             (By.XPATH, "//input[@placeholder='Enter project name']")
         ))
@@ -307,13 +383,15 @@ class ProjectPage:
     def upload_file(self, file_path):
         self.wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
 
+        file_path = os.path.abspath(file_path)
         upload = self.wait.until(
             EC.presence_of_element_located(self.file_upload_input)
         )
 
-        self.driver.execute_script("arguments[0].scrollIntoView(true);", upload)
-
-        self.wait.until(EC.visibility_of(upload))
+        self.driver.execute_script(
+            "arguments[0].style.display='block'; arguments[0].style.visibility='visible'; arguments[0].style.opacity=1;",
+            upload
+        )
 
         upload.send_keys(file_path)
 

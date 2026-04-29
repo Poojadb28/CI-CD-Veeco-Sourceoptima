@@ -12,6 +12,10 @@ class LoginPage:
     #     self.wait.until(
     #         lambda d: d.execute_script("return document.readyState") == "complete"
     #     )
+    def wait_for_page_load(self):
+        self.wait.until(
+            lambda d: d.execute_script("return document.readyState") == "complete"
+        )
 
     def open_url(self):
         self.driver.get("https://testing.sourceoptima.com/")

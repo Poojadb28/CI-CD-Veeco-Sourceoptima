@@ -164,7 +164,7 @@ def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
 
-    if report.when != "call" or not report.failed:
+    if report.when not in ("setup", "call") or not report.failed:
         return
 
     driver = item.funcargs.get("browser")

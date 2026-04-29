@@ -15,13 +15,38 @@ class UserAdminPage:
     #     )
 
     def click_user_admin_view(self):
-        self.wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='User Admin View']"))).click()
+        # self.wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='User Admin View']"))).click()
+        button = self.wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='User Admin View']")))
+        self.driver.execute_script("arguments[0].click();", button)
 
     def click_create_user(self):
-        self.wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='Create User']"))).click()
+        # self.wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='Create User']"))).click()
+        button = self.wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='Create User']")))
+        self.driver.execute_script("arguments[0].click();", button)
+        self.wait.until(
+            EC.visibility_of_element_located((By.XPATH, "//*[normalize-space()='Create New User' or normalize-space()='Cancel']"))
+        )
 
     def click_cancel(self):
-        self.wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='Cancel']"))).click()
+        # self.wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='Cancel']"))).click()
+        locators = [
+            (By.XPATH, "//button[normalize-space()='Cancel']"),
+            (By.XPATH, "//div[contains(@class,'fixed') or contains(@class,'z-50')]//button[normalize-space()='Cancel']"),
+            (By.XPATH, "//button[@type='button' and normalize-space()='Cancel']")
+        ]
+
+        self.wait.until(lambda d: any(
+            element.is_displayed()
+            for locator in locators
+            for element in d.find_elements(*locator)
+        ))
+
+        for locator in locators:
+            elements = self.driver.find_elements(*locator)
+            for element in elements:
+                if element.is_displayed():
+                    self.driver.execute_script("arguments[0].click();", element)
+                    return
 
     def enter_full_name(self, name):
         self.wait.until(EC.presence_of_element_located((By.XPATH, "//input[@placeholder='Enter full name (e.g., John Doe)']"))).send_keys(name)
