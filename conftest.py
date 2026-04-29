@@ -1,130 +1,19 @@
-# pytest_plugins = [
-#     "fixtures.systemadmin_login_fixture",
-#     "fixtures.user_creation_fixture",
-#     "fixtures.admin_creation_fixture",
-#     "fixtures.logout_fixture",
-#     "fixtures.project_fixture",
-#     "fixtures.subspace_fixture",
-#     "fixtures.delete_root_space_fixture",
-#     "fixtures.project_creation_fixture",
-#     "fixtures.project_upload_fixture",
-#     "fixtures.file_upload_fixture",
-#     "fixtures.edit_space_fixture",
-#     "fixtures.delete_project_fixture",
-#     "fixtures.search_file_fixture",
-#     "fixtures.available_plays_fixture",
-#     "fixtures.cost_reduction_play_fixture",
-#     "fixtures.design_review_fixture",
-#     "fixtures.drawing_checker_both_play_fixture",
-#     "fixtures.drawing_checker_general_play_fixture",
-#     "fixtures.drawing_checker_v2_play_fixture",
-#     "fixtures.drawing_checker_veeco_play_fixture",
-#     "fixtures.tariff_analysis_play_fixture",
-#     "fixtures.download_logs_fixture",
-#     "fixtures.delete_file_fixture",
-#     "fixtures.select_deselect_all_files_fixture",
-#     "fixtures.filter_labels_fixture",
-#     "fixtures.create_new_project_fixture",
-#     "fixtures.export_credit_history_fixture",
-#     "fixtures.export_classification_to_excel_fixture",
-#     "fixtures.duplicate_admin_creation_fixture",
-#     "fixtures.duplicate_user_creation_fixture"
-# ]
+import os
+import platform
+import shutil
+import sys
+import tempfile
+from datetime import datetime
 
-# import pytest
-# import sys
-# import os
+import pytest
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
-# from selenium import webdriver
-# from selenium.webdriver.chrome.options import Options
-# from selenium.webdriver.chrome.service import Service
-# from webdriver_manager.chrome import ChromeDriverManager
+try:
+    from selenium.webdriver.chrome.service import Service
+except ImportError:
+    Service = None
 
-
-# # =========================
-# # FIX IMPORT PATH (IMPORTANT FOR JENKINS)
-# # =========================
-# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# sys.path.insert(0, BASE_DIR)
-
-
-# # =========================
-# # ADD COMMAND LINE OPTION
-# # =========================
-# def pytest_addoption(parser):
-#     parser.addoption(
-#         "--browser",
-#         action="store",
-#         default="chrome",
-#         help="Browser to run tests"
-#     )
-
-
-# # =========================
-# # DRIVER SETUP
-# # =========================
-# @pytest.fixture(scope="function")
-# def browser(request):
-#     browser_name = request.config.getoption("--browser")
-
-#     if browser_name == "chrome":
-#         chrome_options = Options()
-
-#         # Required for Jenkins / headless
-#         # chrome_options.add_argument("--headless=new")
-#         chrome_options.add_argument("--no-sandbox")
-#         chrome_options.add_argument("--disable-dev-shm-usage")
-#         chrome_options.add_argument("--disable-gpu")
-#         chrome_options.add_argument("--window-size=1920,1080")
-
-#         download_dir = os.path.abspath("downloads")
-#         os.makedirs(download_dir, exist_ok=True)
-
-#         # Fix download / security issues
-#         prefs = {
-#             "download.default_directory": download_dir,
-#             "download.prompt_for_download": False,
-#             "download.directory_upgrade": True,
-#             "safebrowsing.enabled": True,
-
-#             "profile.default_content_setting_values.automatic_downloads": 1
-#         }
-#         chrome_options.add_experimental_option("prefs", prefs)
-
-#         driver = webdriver.Chrome(
-#         executable_path="drivers/chromedriver.exe",
-#         options=chrome_options
-#         )
-
-#     else:
-#         raise Exception(f"Browser {browser_name} not supported")
-
-#     driver.implicitly_wait(10)
-
-#     yield driver
-
-#     driver.quit()
-
-
-# # =========================
-# # PYTEST HOOK (OPTIONAL - FOR LOGGING)
-# # =========================
-# @pytest.hookimpl(hookwrapper=True)
-# def pytest_runtest_makereport(item, call):
-#     outcome = yield
-#     report = outcome.get_result()
-
-#     if report.when == "call" and report.failed:
-#         driver = item.funcargs.get("browser", None)
-#         if driver:
-#             screenshots_dir = os.path.join(BASE_DIR, "screenshots")
-#             os.makedirs(screenshots_dir, exist_ok=True)
-
-#             file_name = os.path.join(
-#                 screenshots_dir,
-#                 f"{item.name}.png"
-#             )
-#             driver.save_screenshot(file_name)
 
 pytest_plugins = [
     "fixtures.systemadmin_login_fixture",
@@ -144,8 +33,8 @@ pytest_plugins = [
     "fixtures.cost_reduction_play_fixture",
     "fixtures.design_review_fixture",
     "fixtures.drawing_checker_both_play_fixture",
-    "fixtures.drawing_checker_v2_play_fixture",
     "fixtures.drawing_checker_general_play_fixture",
+    "fixtures.drawing_checker_v2_play_fixture",
     "fixtures.drawing_checker_veeco_play_fixture",
     "fixtures.tariff_analysis_play_fixture",
     "fixtures.download_logs_fixture",
@@ -156,134 +45,134 @@ pytest_plugins = [
     "fixtures.export_credit_history_fixture",
     "fixtures.export_classification_to_excel_fixture",
     "fixtures.duplicate_admin_creation_fixture",
-    "fixtures.duplicate_user_creation_fixture"
+    "fixtures.duplicate_user_creation_fixture",
 ]
 
-import pytest
-import sys
-import os
-from datetime import datetime
 
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-
-# Safe import for report plugin
-try:
-    import pytest_html
-except ImportError:
-    pytest_html = None
-
-
-# =========================
-# PATH SETUP
-# =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, BASE_DIR)
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
 
 
-# =========================
-# CLI OPTIONS
-# =========================
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="chrome")
-    parser.addoption("--headless", action="store_true", help="Run in headless mode")
+    parser.addoption(
+        "--headless",
+        action="store_true",
+        default=False,
+        help="Run browser tests without opening a visible Chrome window.",
+    )
 
 
-# =========================
-# SAFE DRIVER SETUP
-# =========================
-def get_driver_service():
+def _env_flag(name):
+    return os.getenv(name, "").strip().lower() in ("1", "true", "yes", "on")
+
+
+def _chromedriver_path():
+    env_path = os.getenv("CHROMEDRIVER_PATH")
+    if env_path and os.path.exists(env_path):
+        return env_path
+
+    local_driver = os.path.join(BASE_DIR, "drivers", "chromedriver.exe")
+    if platform.system().lower() == "windows" and os.path.exists(local_driver):
+        return local_driver
+
+    return None
+
+
+def _create_chrome_driver(options):
+    driver_path = _chromedriver_path()
+
+    if Service is not None and driver_path:
+        try:
+            return webdriver.Chrome(service=Service(driver_path), options=options)
+        except TypeError:
+            pass
+
+    if driver_path:
+        return webdriver.Chrome(executable_path=driver_path, options=options)
+
+    return webdriver.Chrome(options=options)
+
+
+def _enable_headless_downloads(driver, download_dir):
     try:
-        path = ChromeDriverManager().install()
-
-        # Fix for Windows chromedriver path issue
-        if "THIRD_PARTY_NOTICES" in path:
-            path = os.path.join(os.path.dirname(path), "chromedriver.exe")
-
-        return Service(path)
-
+        driver.execute_cdp_cmd(
+            "Page.setDownloadBehavior",
+            {"behavior": "allow", "downloadPath": download_dir},
+        )
     except Exception:
-        # Fallback (VERY IMPORTANT for Jenkins / offline)
-        local_path = os.path.join(BASE_DIR, "drivers", "chromedriver.exe")
-
-        if not os.path.exists(local_path):
-            raise Exception("Chromedriver not found locally or via webdriver-manager")
-
-        return Service(local_path)
+        pass
 
 
-# =========================
-# BROWSER FIXTURE
-# =========================
 @pytest.fixture(scope="function")
 def browser(request):
-    browser_name = request.config.getoption("--browser")
-    headless = request.config.getoption("--headless")
+    browser_name = request.config.getoption("--browser").lower()
+    if browser_name != "chrome":
+        raise ValueError("Unsupported browser: {}".format(browser_name))
 
-    if browser_name.lower() == "chrome":
-        chrome_options = Options()
+    download_dir = os.path.join(BASE_DIR, "downloads")
+    os.makedirs(download_dir, exist_ok=True)
+    chrome_profile_dir = tempfile.mkdtemp(prefix="sourceoptima_chrome_")
 
-        if headless:
-            chrome_options.add_argument("--headless=new")
+    chrome_options = Options()
+    if (
+        request.config.getoption("--headless")
+        or _env_flag("HEADLESS")
+        or os.getenv("JENKINS_URL")
+        or os.getenv("CI")
+    ):
+        chrome_options.add_argument("--headless=new")
 
-        # Stability for Jenkins
-        chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument("--disable-gpu")
-        chrome_options.add_argument("--window-size=1920,1080")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--disable-extensions")
+    chrome_options.add_argument("--disable-crash-reporter")
+    chrome_options.add_argument("--disable-breakpad")
+    chrome_options.add_argument("--disable-software-rasterizer")
+    chrome_options.add_argument("--remote-debugging-port=0")
+    chrome_options.add_argument("--user-data-dir={}".format(chrome_profile_dir))
+    chrome_options.add_argument("--window-size=1920,1080")
 
-        # Download directory setup
-        download_dir = os.path.join(BASE_DIR, "downloads")
-        os.makedirs(download_dir, exist_ok=True)
-
-        prefs = {
+    chrome_options.add_experimental_option(
+        "prefs",
+        {
             "download.default_directory": download_dir,
             "download.prompt_for_download": False,
             "download.directory_upgrade": True,
             "safebrowsing.enabled": True,
-            "profile.default_content_setting_values.automatic_downloads": 1
-        }
-        chrome_options.add_experimental_option("prefs", prefs)
+            "profile.default_content_setting_values.automatic_downloads": 1,
+        },
+    )
 
-        service = get_driver_service()
-        driver = webdriver.Chrome(service=service, options=chrome_options)
+    driver = None
+    try:
+        driver = _create_chrome_driver(chrome_options)
+        _enable_headless_downloads(driver, download_dir)
+        driver.implicitly_wait(10)
 
-    else:
-        raise Exception(f"Unsupported browser: {browser_name}")
-
-    driver.implicitly_wait(10)
-
-    yield driver
-
-    driver.quit()
+        yield driver
+    finally:
+        if driver:
+            driver.quit()
+        shutil.rmtree(chrome_profile_dir, ignore_errors=True)
 
 
-# =========================
-# SCREENSHOT + HTML REPORT
-# =========================
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
 
-    if report.when == "call" and report.failed:
-        driver = item.funcargs.get("browser", None)
+    if report.when != "call" or not report.failed:
+        return
 
-        if driver:
-            screenshots_dir = os.path.join(BASE_DIR, "screenshots")
-            os.makedirs(screenshots_dir, exist_ok=True)
+    driver = item.funcargs.get("browser")
+    if not driver:
+        return
 
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            file_name = f"{item.name}_{timestamp}.png"
-            file_path = os.path.join(screenshots_dir, file_name)
-
-            driver.save_screenshot(file_path)
-
-            # Attach screenshot to HTML report
-            if pytest_html:
-                extra = getattr(report, "extra", [])
-                extra.append(pytest_html.extras.image(file_path))
-                report.extra = extra
-
+    screenshots_dir = os.path.join(BASE_DIR, "screenshots")
+    os.makedirs(screenshots_dir, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    file_name = "{}_{}.png".format(item.name, timestamp)
+    driver.save_screenshot(os.path.join(screenshots_dir, file_name))
