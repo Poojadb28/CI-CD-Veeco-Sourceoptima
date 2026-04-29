@@ -47,13 +47,16 @@ def edit_space(browser):
     # =========================
     login = LoginPage(browser)
     login.login("prekshita@sourceoptima.com", "aspl1234")
+    login.wait_for_page_load()
 
     project = ProjectPage(browser)
+    project.wait_for_page_load()
 
     # =========================
     # NAVIGATION
     # =========================
     project.click_projects()
+    project.wait_for_page_load()
 
     # =========================
     # CREATE ROOT SPACE
@@ -67,7 +70,7 @@ def edit_space(browser):
     project.open_icon_selector()
     project.select_color()
     project.click_create_space()
-
+    project.wait_for_page_load()
     # Wait for creation
     project.wait.until(lambda d: old_name in d.page_source)
 
@@ -77,6 +80,7 @@ def edit_space(browser):
     new_name = f"{old_name}_Edited"
 
     project.right_click_root_space(old_name)
+    project.wait_for_page_load()
 
     project.click_edit_details()
     project.edit_space_name(new_name)

@@ -13,6 +13,11 @@ class ProjectPage:
         self.driver = driver
         self.wait = WebDriverWait(driver, 30)
 
+    def wait_for_page_load(self):
+        self.wait.until(
+            lambda d: d.execute_script("return document.readyState") == "complete"
+        )
+
     def click_projects(self):
         self.wait.until(EC.element_to_be_clickable((By.XPATH, "//span[normalize-space()='Projects']"))).click()
 
@@ -22,7 +27,7 @@ class ProjectPage:
 
     def right_click_on_canvas(self):
 
-        canvas = self.wait.until(EC.presence_of_element_located(
+        canvas = self.wait.until(EC.visibility_of_element_located(
             (By.XPATH, "//div[contains(@class,'flex-1')]")
         ))
 
@@ -35,7 +40,7 @@ class ProjectPage:
             .perform()
 
         # VERY IMPORTANT: wait for menu to appear
-        self.wait.until(EC.presence_of_element_located(
+        self.wait.until(EC.visibility_of_element_located(
             (By.XPATH, "//*[contains(text(),'New Root Space')]")
         ))
 
@@ -82,7 +87,7 @@ class ProjectPage:
 
     def click_new_root_space(self):
         # Wait until context menu is visible
-        menu = self.wait.until(EC.presence_of_all_elements_located(
+        menu = self.wait.until(EC.visibility_of_all_elements_located(
             (By.XPATH, "//*[contains(text(),'New Root Space')]")
         ))
 
@@ -106,7 +111,7 @@ class ProjectPage:
         field.send_keys(name)
 
     def open_icon_selector(self):
-        icon_button = self.wait.until(EC.presence_of_element_located((By.XPATH, "//button[.//*[name()='svg' and contains(@class,'w-5')]]")))
+        icon_button = self.wait.until(EC.visibility_of_element_located((By.XPATH, "//button[.//*[name()='svg' and contains(@class,'w-5')]]")))
         self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", icon_button)
         self.driver.execute_script("arguments[0].click();", icon_button)
 
@@ -163,7 +168,7 @@ class ProjectPage:
 
         # IMPORTANT: wait for menu
         self.wait.until(
-            EC.presence_of_element_located(
+            EC.visibility_of_element_located(
                 (By.XPATH, "//*[contains(text(),'Edit')]")
             )
         )
@@ -192,7 +197,7 @@ class ProjectPage:
 
 
     def choose_icon(self):
-        icon = self.wait.until(EC.presence_of_element_located(
+        icon = self.wait.until(EC.visibility_of_element_located(
             (By.XPATH, "//button[.//*[name()='svg']]")
         ))
         self.driver.execute_script("arguments[0].click();", icon)
@@ -290,7 +295,7 @@ class ProjectPage:
 
         file_path = os.path.abspath(file_path)
 
-        upload = self.wait.until(EC.presence_of_element_located(
+        upload = self.wait.until(EC.visibility_of_element_located(
             (By.XPATH, "//input[@type='file']")
         ))
 
@@ -347,7 +352,7 @@ class ProjectPage:
     # def upload_new_file(self, file_path):
 
     #     # locator inside method
-    #     upload = self.wait.until(EC.presence_of_element_located(
+    #     upload = self.wait.until(EC.visibility_of_element_located(
     #         (By.XPATH, "//input[@type='file']")
     #     ))
 
@@ -395,7 +400,7 @@ class ProjectPage:
 
         # wait for menu items
         elements = self.wait.until(
-            EC.presence_of_all_elements_located(
+            EC.visibility_of_all_elements_located(
                 (By.XPATH, "//*[contains(text(),'Edit')]")
             )
         )
@@ -423,7 +428,7 @@ class ProjectPage:
 
 
     def change_icon(self):
-        icon = self.wait.until(EC.presence_of_element_located(
+        icon = self.wait.until(EC.visibility_of_element_located(
             (By.XPATH, "//button[.//*[name()='svg']]")
         ))
         self.driver.execute_script("arguments[0].click();", icon)

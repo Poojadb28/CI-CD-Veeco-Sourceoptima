@@ -17,6 +17,11 @@ class SystemStatsPage:
         self.driver = driver
         self.wait = WebDriverWait(driver, 120)
 
+    def wait_for_page_load(self):
+        self.wait.until(
+            lambda d: d.execute_script("return document.readyState") == "complete"
+        )
+
     def select_time_range(self, locator):
         self.wait.until(EC.element_to_be_clickable(locator)).click()
 

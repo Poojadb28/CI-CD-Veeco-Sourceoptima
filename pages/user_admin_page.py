@@ -7,7 +7,12 @@ class UserAdminPage:
 
     def __init__(self, driver):
         self.driver = driver
-        self.wait = WebDriverWait(driver, 20)
+        self.wait = WebDriverWait(driver, 120)
+
+    def wait_for_page_load(self):
+        self.wait.until(
+            lambda d: d.execute_script("return document.readyState") == "complete"
+        )
 
     def click_user_admin_view(self):
         self.wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='User Admin View']"))).click()
