@@ -439,7 +439,7 @@ function filterTable(elem) { // eslint-disable-line no-unused-vars
 }
 </script>
     <h1>test_report.html</h1>
-    <p>Report generated on 27-Apr-2026 at 15:25:04 by <a href="https://pypi.python.org/pypi/pytest-html">pytest-html</a> v3.2.0</p>
+    <p>Report generated on 30-Apr-2026 at 12:43:34 by <a href="https://pypi.python.org/pypi/pytest-html">pytest-html</a> v3.2.0</p>
     <h2>Environment</h2>
     <table id="environment">
       <tr>
@@ -458,7 +458,7 @@ function filterTable(elem) { // eslint-disable-line no-unused-vars
         <td>Python</td>
         <td>3.6.8</td></tr></table>
     <h2>Summary</h2>
-    <p>34 tests ran in 1555.82 seconds. </p>
+    <p>34 tests ran in 1471.88 seconds. </p>
     <p class="filter" hidden="true">(Un)check the boxes to filter the results.</p><input checked="true" class="filter" data-test-result="passed" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="passed">34 passed</span>, <input checked="true" class="filter" data-test-result="skipped" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="skipped">0 skipped</span>, <input checked="true" class="filter" data-test-result="failed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="failed">0 failed</span>, <input checked="true" class="filter" data-test-result="error" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="error">1 errors</span>, <input checked="true" class="filter" data-test-result="xfailed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="xfailed">0 expected failures</span>, <input checked="true" class="filter" data-test-result="xpassed" disabled="true" hidden="true" name="filter_checkbox" onChange="filterTable(this)" type="checkbox"/><span class="xpassed">0 unexpected passes</span>
     <h2>Results</h2>
     <table id="results-table">
@@ -473,17 +473,17 @@ function filterTable(elem) { // eslint-disable-line no-unused-vars
       <tbody class="error results-table-row">
         <tr>
           <td class="col-result">Error</td>
-          <td class="col-name">tests/plays/test_cost_reduction_play.py::test_cost_reduction_play::setup</td>
-          <td class="col-duration">169.57</td>
+          <td class="col-name">tests/reports/test_export_classification_to_excel.py::test_export_classification_to_excel::setup</td>
+          <td class="col-duration">48.32</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
-            <div class="log">browser = &lt;selenium.webdriver.chrome.webdriver.WebDriver (session=&quot;452250c95f25857c51dec2b5a49a8e18&quot;)&gt;<br/><br/>    @pytest.fixture<br/>    def cost_reduction_play(browser):<br/>    <br/>        login = LoginPage(browser)<br/>        login.login(&quot;prekshita@sourceoptima.com&quot;, &quot;aspl1234&quot;)<br/>    <br/>        project = ProjectPage(browser)<br/>        cost = CostReductionPage(browser)<br/>    <br/>        # Click Projects<br/>        project.click_projects()<br/>    <br/>        # =========================<br/>        # CREATE ROOT SPACE<br/>        # =========================<br/>        project.right_click_on_canvas()<br/>        project.click_new_root_space()<br/>    <br/>        root_space = f&quot;TestSpace_{int(time.time())}&quot;<br/>    <br/>        project.enter_space_name(root_space)<br/>        project.open_icon_selector()<br/>        project.select_color()<br/>        project.click_create_space()<br/>    <br/>        # Wait for space creation<br/>        project.wait.until(lambda d: root_space in d.page_source)<br/>    <br/>        project.open_root_space(root_space)<br/>    <br/>        # =========================<br/>        # CREATE PROJECT<br/>        # =========================<br/>        project_name = f&quot;TestFile_{int(time.time())}&quot;<br/>    <br/>        file_path = os.path.abspath(&quot;testdata/files/0194.pdf&quot;)<br/>    <br/>        if not os.path.exists(file_path):<br/>            raise Exception(f&quot;File not found: {file_path}&quot;)<br/>    <br/>        project.click_new_upload()<br/>        project.enter_project_name(project_name)<br/>        project.upload_file(file_path)<br/>        project.click_upload()<br/>    <br/>        # Wait for project creation<br/>        project.wait_for_processing_complete()<br/>    <br/>        # =========================<br/>        # OPEN PROJECT<br/>        # =========================<br/>        project.open_project(project_name)<br/>    <br/>        # wait until files appear<br/>        project.wait.until(lambda d: len(d.find_elements(By.XPATH, &quot;//input[@type=&#x27;checkbox&#x27;]&quot;)) &gt; 0)<br/>    <br/>        project.select_all_files()<br/>    <br/>        project.wait.until(EC.element_to_be_clickable((By.XPATH, &quot;//select&quot;))<br/>    )<br/>        # Perform Cost Reduction Play<br/>&gt;       cost.select_cost_reduction()<br/><br/>fixtures\cost_reduction_play_fixture.py:73: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>pages\cost_reduction_play_page.py:58: in select_cost_reduction<br/>    EC.visibility_of_element_located(self.run_button)<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;selenium.webdriver.support.wait.WebDriverWait (session=&quot;452250c95f25857c51dec2b5a49a8e18&quot;)&gt;<br/>method = &lt;selenium.webdriver.support.expected_conditions.visibility_of_element_located object at 0x00000252D3A73898&gt;, message = &#x27;&#x27;<br/><br/>    def until(self, method, message=&#x27;&#x27;):<br/>        &quot;&quot;&quot;Calls the method provided with the driver as an argument until the \<br/>        return value is not False.&quot;&quot;&quot;<br/>        screen = None<br/>        stacktrace = None<br/>    <br/>        end_time = time.time() + self._timeout<br/>        while True:<br/>            try:<br/>                value = method(self._driver)<br/>                if value:<br/>                    return value<br/>            except self._ignored_exceptions as exc:<br/>                screen = getattr(exc, &#x27;screen&#x27;, None)<br/>                stacktrace = getattr(exc, &#x27;stacktrace&#x27;, None)<br/>            time.sleep(self._poll)<br/>            if time.time() &gt; end_time:<br/>                break<br/>&gt;       raise TimeoutException(message, screen, stacktrace)<br/><span class="error">E       selenium.common.exceptions.TimeoutException: Message:</span><br/><br/>..\..\appdata\local\programs\python\python36\lib\site-packages\selenium\webdriver\support\wait.py:80: TimeoutException<br/></div></td></tr></tbody>
+            <div class="log">browser = &lt;selenium.webdriver.chrome.webdriver.WebDriver (session=&quot;345d9f3c8a07bb12da3ae8907dced4c8&quot;)&gt;<br/><br/>    @pytest.fixture<br/>    def export_classification_to_excel(browser):<br/>    <br/>        login = LoginPage(browser)<br/>        login.login(&quot;prekshita@sourceoptima.com&quot;, &quot;aspl1234&quot;)<br/>    <br/>        project = ProjectPage(browser)<br/>    <br/>        # ================= PROJECT =================<br/>        project.click_projects()<br/>    <br/>        # -------- CREATE ROOT SPACE --------<br/>&gt;       project.right_click_on_canvas()<br/><br/>fixtures\export_classification_to_excel_fixture.py:21: <br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/>pages\project_page.py:44: in right_click_on_canvas<br/>    (By.XPATH, &quot;//*[contains(text(),&#x27;New Root Space&#x27;)]&quot;)<br/>_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ <br/><br/>self = &lt;selenium.webdriver.support.wait.WebDriverWait (session=&quot;345d9f3c8a07bb12da3ae8907dced4c8&quot;)&gt;<br/>method = &lt;selenium.webdriver.support.expected_conditions.presence_of_element_located object at 0x00000204C4EF5BA8&gt;, message = &#x27;&#x27;<br/><br/>    def until(self, method, message=&#x27;&#x27;):<br/>        &quot;&quot;&quot;Calls the method provided with the driver as an argument until the \<br/>        return value is not False.&quot;&quot;&quot;<br/>        screen = None<br/>        stacktrace = None<br/>    <br/>        end_time = time.time() + self._timeout<br/>        while True:<br/>            try:<br/>                value = method(self._driver)<br/>                if value:<br/>                    return value<br/>            except self._ignored_exceptions as exc:<br/>                screen = getattr(exc, &#x27;screen&#x27;, None)<br/>                stacktrace = getattr(exc, &#x27;stacktrace&#x27;, None)<br/>            time.sleep(self._poll)<br/>            if time.time() &gt; end_time:<br/>                break<br/>&gt;       raise TimeoutException(message, screen, stacktrace)<br/><span class="error">E       selenium.common.exceptions.TimeoutException: Message:</span><br/><br/>..\..\appdata\local\programs\python\python36\lib\site-packages\selenium\webdriver\support\wait.py:80: TimeoutException<br/></div></td></tr></tbody>
       <tbody class="passed results-table-row">
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/files/test_delete_file.py::test_delete_file</td>
-          <td class="col-duration">65.98</td>
+          <td class="col-duration">66.96</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -492,17 +492,17 @@ function filterTable(elem) { // eslint-disable-line no-unused-vars
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/files/test_download_logs.py::test_download_logs</td>
-          <td class="col-duration">20.18</td>
+          <td class="col-duration">23.76</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
-            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Downloaded files: [&#x27;sourceoptima_logs_2026-04-27 (1).txt&#x27;, &#x27;sourceoptima_logs_2026-04-27 (2).txt&#x27;, &#x27;sourceoptima_logs_2026-04-27 (3).txt&#x27;, &#x27;sourceoptima_logs_2026-04-27 (4).txt&#x27;, &#x27;sourceoptima_logs_2026-04-27.txt&#x27;]
+            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Downloaded files: [&#x27;sourceoptima_logs_2026-04-30 (1).txt&#x27;, &#x27;sourceoptima_logs_2026-04-30 (2).txt&#x27;, &#x27;sourceoptima_logs_2026-04-30 (3).txt&#x27;, &#x27;sourceoptima_logs_2026-04-30 (4).txt&#x27;, &#x27;sourceoptima_logs_2026-04-30.txt&#x27;]
 <br/></div></td></tr></tbody>
       <tbody class="passed results-table-row">
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/files/test_filter_labels.py::test_filter_labels</td>
-          <td class="col-duration">67.45</td>
+          <td class="col-duration">66.38</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -511,7 +511,7 @@ function filterTable(elem) { // eslint-disable-line no-unused-vars
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/files/test_select_deselect_all_files.py::test_select_deselect_all_files</td>
-          <td class="col-duration">41.13</td>
+          <td class="col-duration">41.42</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -520,7 +520,7 @@ function filterTable(elem) { // eslint-disable-line no-unused-vars
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/login/test_admin_invalid_login.py::test_admin_invalid_login</td>
-          <td class="col-duration">9.23</td>
+          <td class="col-duration">8.48</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -529,7 +529,7 @@ function filterTable(elem) { // eslint-disable-line no-unused-vars
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/login/test_admin_login.py::test_admin_login</td>
-          <td class="col-duration">9.83</td>
+          <td class="col-duration">9.40</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -538,7 +538,7 @@ function filterTable(elem) { // eslint-disable-line no-unused-vars
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/login/test_logout.py::test_logout</td>
-          <td class="col-duration">8.83</td>
+          <td class="col-duration">9.71</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -547,7 +547,7 @@ function filterTable(elem) { // eslint-disable-line no-unused-vars
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/login/test_systemadmin_invalig_login.py::test_system_admin_invalid_login</td>
-          <td class="col-duration">6.67</td>
+          <td class="col-duration">6.93</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -556,7 +556,7 @@ function filterTable(elem) { // eslint-disable-line no-unused-vars
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/login/test_systemadmin_login.py::test_system_admin_login</td>
-          <td class="col-duration">8.85</td>
+          <td class="col-duration">10.08</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -565,7 +565,7 @@ function filterTable(elem) { // eslint-disable-line no-unused-vars
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/login/test_user_invalid_login.py::test_user_invalid_login</td>
-          <td class="col-duration">6.91</td>
+          <td class="col-duration">7.05</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -574,7 +574,7 @@ function filterTable(elem) { // eslint-disable-line no-unused-vars
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/login/test_user_login.py::test_user_login</td>
-          <td class="col-duration">9.07</td>
+          <td class="col-duration">8.84</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -583,7 +583,7 @@ function filterTable(elem) { // eslint-disable-line no-unused-vars
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/plays/test_available_plays.py::test_available_plays_enable_disable</td>
-          <td class="col-duration">15.29</td>
+          <td class="col-duration">43.56</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -605,74 +605,84 @@ Toggling: Drawing Checker V2
       <tbody class="passed results-table-row">
         <tr>
           <td class="col-result">Passed</td>
-          <td class="col-name">tests/plays/test_design_review_play.py::test_design_review_play</td>
-          <td class="col-duration">176.84</td>
+          <td class="col-name">tests/plays/test_cost_reduction_play.py::test_cost_reduction_play</td>
+          <td class="col-duration">52.03</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
-            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>New downloaded file: [&#x27;0194_Design_Review (1).xlsx&#x27;]
+            <div class="empty log">No log output captured.</div></td></tr></tbody>
+      <tbody class="passed results-table-row">
+        <tr>
+          <td class="col-result">Passed</td>
+          <td class="col-name">tests/plays/test_design_review_play.py::test_design_review_play</td>
+          <td class="col-duration">177.43</td>
+          <td class="col-links"></td></tr>
+        <tr>
+          <td class="extra" colspan="4">
+            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>New downloaded file: [&#x27;0194_Design_Review.xlsx&#x27;]
 <br/></div></td></tr></tbody>
       <tbody class="passed results-table-row">
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/plays/test_drawing_checker_both_play.py::test_drawing_checker_both_play</td>
-          <td class="col-duration">53.83</td>
+          <td class="col-duration">53.55</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
-            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Downloaded files: {&#x27;Drawing_Checker_Report (4).pdf&#x27;}
+            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Downloaded files: {&#x27;Drawing_Checker_Report.pdf&#x27;}
 <br/></div></td></tr></tbody>
       <tbody class="passed results-table-row">
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/plays/test_drawing_checker_general_play.py::test_drawing_checker_general_play</td>
-          <td class="col-duration">63.30</td>
+          <td class="col-duration">61.36</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
             <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Drilldown buttons found: 7
-Downloaded: [&#x27;Drawing_Checker_Report (5).pdf&#x27;]
+Downloaded: [&#x27;Drawing_Checker_Report (1).pdf&#x27;]
 <br/></div></td></tr></tbody>
       <tbody class="passed results-table-row">
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/plays/test_drawing_checker_v2_play.py::test_drawing_checker_v2_play</td>
-          <td class="col-duration">64.05</td>
+          <td class="col-duration">66.26</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
             <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Drilldown buttons: 5
- Downloaded files: {&#x27;Drawing_Checker_Report (6).pdf&#x27;}
+ Downloaded files: {&#x27;Drawing_Checker_Report (2).pdf&#x27;}
 <br/></div></td></tr></tbody>
       <tbody class="passed results-table-row">
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/plays/test_drawing_checker_veeco_play.py::test_drawing_checker_veeco_play</td>
-          <td class="col-duration">62.60</td>
+          <td class="col-duration">60.45</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
             <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Drilldown buttons: 7
-Downloaded: [&#x27;Drawing_Checker_Report (7).pdf&#x27;]
+Downloaded: [&#x27;Drawing_Checker_Report (3).pdf&#x27;]
 <br/></div></td></tr></tbody>
       <tbody class="passed results-table-row">
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/plays/test_tariff_analysis_play.py::test_tariff_analysis_play</td>
-          <td class="col-duration">194.25</td>
+          <td class="col-duration">198.17</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
-            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>BOM Downloaded: [&#x27;BOM_TestFile_1777283018_2026-04-27.xlsx&#x27;]
+            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Clicked BOM Export
+BOM Downloaded: [&#x27;0194_Design_Review.xlsx&#x27;]
 Wizard completed fully
 Processing completed
-Tariff Downloaded: [&#x27;SourceOptima_Tariff_Analysis_2026-04-27 (1).xlsx&#x27;]
+Tariff Downloaded: [&#x27;SourceOptima_Tariff_Analysis_2026-04-30.xlsx&#x27;]
 <br/></div></td></tr></tbody>
       <tbody class="passed results-table-row">
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/project/test_create_new_project.py::test_create_new_project</td>
-          <td class="col-duration">43.17</td>
+          <td class="col-duration">41.21</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -681,7 +691,7 @@ Tariff Downloaded: [&#x27;SourceOptima_Tariff_Analysis_2026-04-27 (1).xlsx&#x27;
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/project/test_create_project.py::test_create_project</td>
-          <td class="col-duration">41.98</td>
+          <td class="col-duration">36.45</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -690,7 +700,7 @@ Tariff Downloaded: [&#x27;SourceOptima_Tariff_Analysis_2026-04-27 (1).xlsx&#x27;
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/project/test_delete_project.py::test_delete_project</td>
-          <td class="col-duration">62.46</td>
+          <td class="col-duration">60.71</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -699,7 +709,7 @@ Tariff Downloaded: [&#x27;SourceOptima_Tariff_Analysis_2026-04-27 (1).xlsx&#x27;
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/project/test_edit_space_details.py::test_edit_details</td>
-          <td class="col-duration">27.43</td>
+          <td class="col-duration">26.73</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -708,7 +718,7 @@ Tariff Downloaded: [&#x27;SourceOptima_Tariff_Analysis_2026-04-27 (1).xlsx&#x27;
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/project/test_search_file.py::test_search_file</td>
-          <td class="col-duration">45.93</td>
+          <td class="col-duration">41.79</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -717,7 +727,7 @@ Tariff Downloaded: [&#x27;SourceOptima_Tariff_Analysis_2026-04-27 (1).xlsx&#x27;
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/project/test_upload_new_file.py::test_upload_new_file</td>
-          <td class="col-duration">67.46</td>
+          <td class="col-duration">66.15</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -726,7 +736,7 @@ Tariff Downloaded: [&#x27;SourceOptima_Tariff_Analysis_2026-04-27 (1).xlsx&#x27;
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/project/test_upload_project.py::test_add_new_project</td>
-          <td class="col-duration">41.06</td>
+          <td class="col-duration">40.23</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -734,18 +744,8 @@ Tariff Downloaded: [&#x27;SourceOptima_Tariff_Analysis_2026-04-27 (1).xlsx&#x27;
       <tbody class="passed results-table-row">
         <tr>
           <td class="col-result">Passed</td>
-          <td class="col-name">tests/reports/test_export_classification_to_excel.py::test_export_classification_to_excel</td>
-          <td class="col-duration">45.38</td>
-          <td class="col-links"></td></tr>
-        <tr>
-          <td class="extra" colspan="4">
-            <div class="log"> ------------------------------Captured stdout call------------------------------ <br/>Downloaded: TestFile_1777283542_classification_2026-04-27.xlsx
-<br/></div></td></tr></tbody>
-      <tbody class="passed results-table-row">
-        <tr>
-          <td class="col-result">Passed</td>
           <td class="col-name">tests/reports/test_export_credit_history.py::test_export_credit_history</td>
-          <td class="col-duration">15.30</td>
+          <td class="col-duration">16.59</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -754,7 +754,7 @@ Tariff Downloaded: [&#x27;SourceOptima_Tariff_Analysis_2026-04-27 (1).xlsx&#x27;
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/user_management/test_create_admin.py::test_create_admin</td>
-          <td class="col-duration">13.30</td>
+          <td class="col-duration">14.10</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -763,7 +763,7 @@ Tariff Downloaded: [&#x27;SourceOptima_Tariff_Analysis_2026-04-27 (1).xlsx&#x27;
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/user_management/test_create_user.py::test_create_user</td>
-          <td class="col-duration">13.39</td>
+          <td class="col-duration">13.97</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -772,7 +772,7 @@ Tariff Downloaded: [&#x27;SourceOptima_Tariff_Analysis_2026-04-27 (1).xlsx&#x27;
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/user_management/test_duplicate_admin_creation.py::test_duplicate_admin_creation</td>
-          <td class="col-duration">18.39</td>
+          <td class="col-duration">19.97</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -781,7 +781,7 @@ Tariff Downloaded: [&#x27;SourceOptima_Tariff_Analysis_2026-04-27 (1).xlsx&#x27;
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/user_management/test_duplicate_user_creation.py::test_duplicate_user_creation</td>
-          <td class="col-duration">19.03</td>
+          <td class="col-duration">21.45</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -790,7 +790,7 @@ Tariff Downloaded: [&#x27;SourceOptima_Tariff_Analysis_2026-04-27 (1).xlsx&#x27;
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/workspace/test_create_root_space.py::test_create_root_space</td>
-          <td class="col-duration">11.90</td>
+          <td class="col-duration">15.54</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -799,7 +799,7 @@ Tariff Downloaded: [&#x27;SourceOptima_Tariff_Analysis_2026-04-27 (1).xlsx&#x27;
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/workspace/test_create_sub_space.py::test_add_sub_space</td>
-          <td class="col-duration">18.39</td>
+          <td class="col-duration">18.12</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
@@ -808,9 +808,9 @@ Tariff Downloaded: [&#x27;SourceOptima_Tariff_Analysis_2026-04-27 (1).xlsx&#x27;
         <tr>
           <td class="col-result">Passed</td>
           <td class="col-name">tests/workspace/test_delete_root_space.py::test_delete_root_space</td>
-          <td class="col-duration">16.66</td>
+          <td class="col-duration">18.03</td>
           <td class="col-links"></td></tr>
         <tr>
           <td class="extra" colspan="4">
-            <div class="log"> -----------------------------Captured stdout setup------------------------------ <br/>Alert text: Are you sure you want to delete &quot;TestSpace_1777283693&quot;?
+            <div class="log"> -----------------------------Captured stdout setup------------------------------ <br/>Alert text: Are you sure you want to delete &quot;TestSpace_1777533203&quot;?
 <br/></div></td></tr></tbody></table></body></html>

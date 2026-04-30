@@ -9,12 +9,7 @@ class SystemAdminPage:
 
     def __init__(self, driver):
         self.driver = driver
-        self.wait = WebDriverWait(driver, 120)
-
-    # def wait_for_page_load(self):
-    #     self.wait.until(
-    #         lambda d: d.execute_script("return document.readyState") == "complete"
-    #     )
+        self.wait = WebDriverWait(driver, 30)
 
     # ================= LOCATORS ================= #
 

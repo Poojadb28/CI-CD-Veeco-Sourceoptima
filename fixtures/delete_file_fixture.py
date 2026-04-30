@@ -9,7 +9,7 @@ from pages.project_page import ProjectPage
 
 
 @pytest.fixture
-def delete_file_setup(browser):
+def delete_file(browser):
 
     login = LoginPage(browser)
     login.login("prekshita@sourceoptima.com", "aspl1234")
@@ -42,18 +42,8 @@ def delete_file_setup(browser):
     # project.upload_file(file_path)
     
 
-    # WAIT for upload popup
-    project.wait.until(
-        EC.visibility_of_element_located(project.upload_popup_locator)
-    )
-
-    project.enter_project_name(project_name)
-
-    # WAIT for file input before upload
-    project.wait.until(
-        EC.presence_of_element_located(project.file_upload_input)
-    )
     project.click_new_upload()
+    project.enter_project_name(project_name)
     project.upload_file(file_path)
     project.click_upload()
 

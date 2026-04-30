@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import os
 
 
 class SystemStatsPage:
@@ -17,13 +18,24 @@ class SystemStatsPage:
         self.driver = driver
         self.wait = WebDriverWait(driver, 120)
 
-    # def wait_for_page_load(self):
-    #     self.wait.until(
-    #         lambda d: d.execute_script("return document.readyState") == "complete"
-    #     )
+    def safe_click(self, element):
+        self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", element)
+        self.driver.execute_script("arguments[0].click();", element)
 
     def select_time_range(self, locator):
-        self.wait.until(EC.element_to_be_clickable(locator)).click()
+        btn = self.wait.until(EC.element_to_be_clickable(locator))
+        self.safe_click(btn)
 
-    def click_download_logs(self):
-        self.wait.until(EC.element_to_be_clickable(self.download_logs_button)).click()
+    def download_logs_for_range(self, download_dir):
+        before = set(os.listdir(download_dir))
+
+        btn = self.wait.until(EC.element_to_be_clickable(self.download_logs_button))
+        self.safe_click(btn)
+
+        # wait for new completed file
+        self.wait.until(
+            lambda d: len([
+                f for f in (set(os.listdir(download_dir)) - before)
+                if not f.endswith(".crdownload")
+            ]) >= 1
+        )

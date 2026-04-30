@@ -3,9 +3,9 @@ import os
 
 
 @pytest.mark.smoke
-def test_download_logs(download_logs_setup):
+def test_download_logs(download_logs):
 
-    download_dir, file_prefix = download_logs_setup
+    download_dir, file_prefix = download_logs
 
     files = [
         f for f in os.listdir(download_dir)
