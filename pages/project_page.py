@@ -13,6 +13,12 @@ class ProjectPage:
         self.driver = driver
         self.wait = WebDriverWait(driver, 30)
 
+    def safe_click(self, element):
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block:'center'});", element
+        )
+        self.driver.execute_script("arguments[0].click();", element)
+
     def wait_for_page_load(self):
         self.wait.until(
             lambda d: d.execute_script("return document.readyState") == "complete"
@@ -396,34 +402,73 @@ class ProjectPage:
 
     #     raise Exception("Edit Details option not found")
 
+    # def click_edit_details(self):
+
+    #     # wait for menu items
+    #     elements = self.wait.until(
+    #         EC.presence_of_all_elements_located(
+    #             (By.XPATH, "//*[contains(text(),'Edit')]")
+    #         )
+    #     )
+
+    #     for el in elements:
+    #         if el.is_displayed():
+    #             self.driver.execute_script("arguments[0].click();", el)
+    #             return
+
+    #     raise Exception("Edit Details option not found")
+
     def click_edit_details(self):
 
-        # wait for menu items
         elements = self.wait.until(
             EC.presence_of_all_elements_located(
-                (By.XPATH, "//*[contains(text(),'Edit')]")
+                (By.XPATH, "//*[contains(text(),'Edit Details')]")
             )
         )
 
         for el in elements:
             if el.is_displayed():
-                self.driver.execute_script("arguments[0].click();", el)
-                return
+                self.safe_click(el)
+                break
 
-        raise Exception("Edit Details option not found")
+        # wait for input field 
+        self.wait.until(
+            lambda d: len(d.find_elements(By.XPATH, "//input[@type='text']")) > 0
+        )
+    
 
+
+    # def edit_space_name(self, new_name):
+    #     from selenium.webdriver.common.keys import Keys
+
+    #     field = self.wait.until(EC.visibility_of_element_located(
+    #         (By.XPATH, "//div[contains(@class,'z-50')]//input")
+    #     ))
+
+    #     field.click()
+    #     field.clear()
+    #     field.send_keys(Keys.CONTROL + "a")
+    #     field.send_keys(Keys.DELETE)
+    #     field.send_keys(new_name)
 
     def edit_space_name(self, new_name):
-        from selenium.webdriver.common.keys import Keys
 
-        field = self.wait.until(EC.visibility_of_element_located(
-            (By.XPATH, "//div[contains(@class,'z-50')]//input")
-        ))
+        inputs = self.wait.until(
+            EC.presence_of_all_elements_located((By.XPATH, "//input[@type='text']"))
+        )
+
+        field = None
+
+        for inp in inputs:
+            if inp.is_displayed():
+                field = inp
+                break
+
+        if not field:
+            raise Exception("Edit input field not found")
 
         field.click()
         field.clear()
-        field.send_keys(Keys.CONTROL + "a")
-        field.send_keys(Keys.DELETE)
         field.send_keys(new_name)
 
 

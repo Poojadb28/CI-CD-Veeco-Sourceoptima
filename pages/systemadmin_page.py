@@ -70,7 +70,7 @@ class SystemAdminPage:
 
     def toggle_play(self, play_name):
 
-        print(f"Toggling: {play_name}")
+        # print(f"Toggling: {play_name}")
 
         toggle = self.wait.until(
             EC.element_to_be_clickable((

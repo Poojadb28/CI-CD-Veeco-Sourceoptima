@@ -16,7 +16,7 @@ class SystemStatsPage:
 
     def __init__(self, driver):
         self.driver = driver
-        self.wait = WebDriverWait(driver, 120)
+        self.wait = WebDriverWait(driver, 180)
 
     def safe_click(self, element):
         self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", element)

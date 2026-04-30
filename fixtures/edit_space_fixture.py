@@ -36,6 +36,7 @@ import pytest
 import time
 
 from pages.systemadmin_login_page import LoginPage
+from selenium.webdriver.common.by import By
 from pages.project_page import ProjectPage
 
 
@@ -47,16 +48,13 @@ def edit_space(browser):
     # =========================
     login = LoginPage(browser)
     login.login("prekshita@sourceoptima.com", "aspl1234")
-    login.wait_for_page_load()
 
     project = ProjectPage(browser)
-    project.wait_for_page_load()
 
     # =========================
     # NAVIGATION
     # =========================
     project.click_projects()
-    project.wait_for_page_load()
 
     # =========================
     # CREATE ROOT SPACE
@@ -70,7 +68,7 @@ def edit_space(browser):
     project.open_icon_selector()
     project.select_color()
     project.click_create_space()
-    project.wait_for_page_load()
+
     # Wait for creation
     project.wait.until(lambda d: old_name in d.page_source)
 
@@ -80,15 +78,21 @@ def edit_space(browser):
     new_name = f"{old_name}_Edited"
 
     project.right_click_root_space(old_name)
-    project.wait_for_page_load()
 
     project.click_edit_details()
+    # EXTRA WAIT (this fixes Jenkins flakiness)
+    project.wait.until(
+        lambda d: len(d.find_elements(By.XPATH, "//input")) > 0
+    )
+
     project.edit_space_name(new_name)
     project.change_icon()
     project.select_purple_color()
     project.save_changes()
 
-    # Wait for update reflected
-    project.wait.until(lambda d: new_name in d.page_source)
+    # wait until name updated
+    project.wait.until(
+        lambda d: len(d.find_elements(By.XPATH, f"//h4[normalize-space()='{new_name}']")) > 0
+    )
 
     return project, new_name

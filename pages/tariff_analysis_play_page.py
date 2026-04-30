@@ -156,7 +156,7 @@ class TariffPage:
         # Step 6: Click using JS (important for Jenkins)
         self.driver.execute_script("arguments[0].click();", element)
 
-        print("Clicked BOM Export")
+        # print("Clicked BOM Export")
 
         # Step 7: Wait for download start + completion
         end_time = time.time() + 180
@@ -170,11 +170,11 @@ class TariffPage:
                 if f.endswith(".xlsx") and not f.endswith(".crdownload")
             ]
 
-            if completed_files:
-                print("BOM Downloaded:", completed_files)
-                return
+            # if completed_files:
+            #     print("BOM Downloaded:", completed_files)
+            #     return
 
-            time.sleep(2)
+            # time.sleep(2)
 
         raise Exception("BOM download did not complete")
 
@@ -214,9 +214,9 @@ class TariffPage:
                     By.XPATH, "//*[contains(text(),'nature of the imported good')]"
                 )
 
-                if not wizard:
-                    print("Wizard completed fully")
-                    return
+                # if not wizard:
+                #     print("Wizard completed fully")
+                #     return
 
                 # click visible option (label is safer than input)
                 options = self.driver.find_elements(
@@ -239,22 +239,19 @@ class TariffPage:
         except Exception as e:
             print("Wizard handling skipped:", e)
 
-        time.sleep(5)
+        # time.sleep(5)
 
     def wait_for_processing_complete(self):
 
         from selenium.webdriver.common.by import By
         from selenium.webdriver.support import expected_conditions as EC
 
-        try:
+     
             # Wait until any loader disappears
-            self.wait.until_not(EC.presence_of_element_located(
+        self.wait.until_not(EC.presence_of_element_located(
                 (By.XPATH, "//div[contains(@class,'animate-spin') or contains(text(),'Processing')]")
             ))
-            print("Processing completed")
-
-        except:
-            print("No loader found, continuing")
+           
 
     def export_tariff(self, download_dir):
 
