@@ -55,3 +55,4 @@ def tariff_analysis_play(browser):
     tariff.run_tariff_analysis()
 
     return tariff
+

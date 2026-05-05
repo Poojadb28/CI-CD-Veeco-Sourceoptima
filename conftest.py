@@ -32,13 +32,12 @@
 # ]
 
 # import pytest
+# import tempfile
 # import sys
 # import os
 
 # from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options
-# from selenium.webdriver.chrome.service import Service
-# from webdriver_manager.chrome import ChromeDriverManager
 
 
 # # =========================
@@ -63,6 +62,48 @@
 # # =========================
 # # DRIVER SETUP
 # # =========================
+# # @pytest.fixture(scope="function")
+# # def browser(request):
+# #     browser_name = request.config.getoption("--browser")
+
+# #     if browser_name == "chrome":
+# #         chrome_options = Options()
+
+# #         # Required for Jenkins / headless
+# #         chrome_options.add_argument("--headless=new")
+# #         chrome_options.add_argument("--no-sandbox")
+# #         chrome_options.add_argument("--disable-dev-shm-usage")
+# #         chrome_options.add_argument("--disable-gpu")
+# #         chrome_options.add_argument("--window-size=1920,1080")
+
+# #         download_dir = os.path.abspath("downloads")
+# #         os.makedirs(download_dir, exist_ok=True)
+
+# #         # Fix download / security issues
+# #         prefs = {
+# #             "download.default_directory": download_dir,
+# #             "download.prompt_for_download": False,
+# #             "download.directory_upgrade": True,
+# #             "safebrowsing.enabled": True,
+
+# #             "profile.default_content_setting_values.automatic_downloads": 1
+# #         }
+# #         chrome_options.add_experimental_option("prefs", prefs)
+
+# #         driver = webdriver.Chrome(
+# #         executable_path="drivers/chromedriver.exe",
+# #         options=chrome_options
+# #         )
+
+# #     else:
+# #         raise Exception(f"Browser {browser_name} not supported")
+
+# #     driver.implicitly_wait(10)
+
+# #     yield driver
+
+# #     driver.quit()
+
 # @pytest.fixture(scope="function")
 # def browser(request):
 #     browser_name = request.config.getoption("--browser")
@@ -77,24 +118,34 @@
 #         chrome_options.add_argument("--disable-gpu")
 #         chrome_options.add_argument("--window-size=1920,1080")
 
+#         # Shared download folder (no fixture changes needed)
 #         download_dir = os.path.abspath("downloads")
 #         os.makedirs(download_dir, exist_ok=True)
 
-#         # Fix download / security issues
+#         # Clean folder before each test (VERY IMPORTANT)
+#         for f in os.listdir(download_dir):
+#             try:
+#                 os.remove(os.path.join(download_dir, f))
+#             except:
+#                 pass
+
+#         # Chrome download preferences
 #         prefs = {
 #             "download.default_directory": download_dir,
 #             "download.prompt_for_download": False,
 #             "download.directory_upgrade": True,
 #             "safebrowsing.enabled": True,
-
 #             "profile.default_content_setting_values.automatic_downloads": 1
 #         }
 #         chrome_options.add_experimental_option("prefs", prefs)
 
 #         driver = webdriver.Chrome(
-#         executable_path="drivers/chromedriver.exe",
-#         options=chrome_options
+#             executable_path="drivers/chromedriver.exe",
+#             options=chrome_options
 #         )
+
+#         # Optional: attach for future use (no need to change tests now)
+#         driver.download_dir = download_dir
 
 #     else:
 #         raise Exception(f"Browser {browser_name} not supported")

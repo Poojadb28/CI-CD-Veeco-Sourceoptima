@@ -1,4 +1,5 @@
 import os
+from utils.download_utils import wait_for_new_file
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -25,7 +26,8 @@ class TariffPage:
 
     # Separate export buttons
     bom_export_btn = (By.XPATH, "(//button[normalize-space()='Export to Excel'])[1]")
-    tariff_export_btn = (By.XPATH, "(//button[normalize-space()='Export to Excel'])[2]")
+    # tariff_export_btn = (By.XPATH, "(//button[normalize-space()='Export to Excel'])[2]")
+    tariff_export_btn = (By.XPATH,"//button[contains(.,'Export to Excel')][last()]")
 
     approve_bom_btn = (By.XPATH, "//span[normalize-space()='Approve BOM']")
     tariff_heading = (By.XPATH, "//h2[contains(text(),'Tariff Analysis')]")
@@ -79,105 +81,118 @@ class TariffPage:
         self.wait.until(EC.presence_of_element_located(
             (By.XPATH, "//button[normalize-space()='Export to Excel']")
         ))
+   
 
     # def export_bom(self, download_dir):
-
-    #     before_files = set(os.listdir(download_dir))
-
-    #     # WAIT until button is clickable (after processing)
-    #     button = WebDriverWait(self.driver, 180).until(
-    #         EC.element_to_be_clickable(self.bom_export_btn)
-    #     )
-
-    #     self.driver.execute_script("arguments[0].scrollIntoView();", button)
-    #     self.driver.execute_script("arguments[0].click();", button)
-
-    #     # Wait for download
-    #     WebDriverWait(self.driver, 60).until(
-    #         lambda d: len(set(os.listdir(download_dir)) - before_files) > 0
-    #     )
-
-    #     after_files = set(os.listdir(download_dir))
-    #     new_files = after_files - before_files
-
-    #     print("BOM Downloaded:", new_files)
-
-    #     assert new_files, "BOM file not downloaded"
-
-    # def export_bom(self, download_dir):
-
     #     import time, os
 
-    #     before_files = set(os.listdir(download_dir))
+    #     # Step 1: Ensure page fully loaded
+    #     self.wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
 
-    #     button = self.wait.until(EC.element_to_be_clickable(self.bom_export_btn))
-    #     self.driver.execute_script("arguments[0].click();", button)
+    #     # Step 2: Wait for button presence
+    #     element = self.wait.until(EC.presence_of_element_located(self.bom_export_btn))
 
+    #     # Step 3: Scroll into view
+    #     self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+
+    #     # Step 4: Wait for visibility
+    #     self.wait.until(EC.visibility_of(element))
+
+    #     # Step 5: Wait until clickable
+    #     self.wait.until(EC.element_to_be_clickable(self.bom_export_btn))
+
+    #     # Step 6: Click using JS (important for Jenkins)
+    #     self.driver.execute_script("arguments[0].click();", element)
+
+    #     # print("Clicked BOM Export")
+
+    #     # Step 7: Wait for download start + completion
     #     end_time = time.time() + 180
 
     #     while time.time() < end_time:
+    #         files = os.listdir(download_dir)
 
-    #         after_files = set(os.listdir(download_dir))
-    #         new_files = after_files - before_files
-
-    #         # ONLY accept fully downloaded files
-    #         completed = [
-    #             f for f in new_files
-    #             if f.endswith(".xlsx")
+    #         # ignore temp files
+    #         completed_files = [
+    #             f for f in files
+    #             if f.endswith(".xlsx") and not f.endswith(".crdownload")
     #         ]
 
-    #         # ignore .crdownload completely
-    #         if completed:
-    #             print("BOM Downloaded:", completed)
-    #             return
+    #         # if completed_files:
+    #         #     print("BOM Downloaded:", completed_files)
+    #         #     return
 
-    #         time.sleep(2)
+    #         # time.sleep(2)
+
+    #     raise Exception("BOM download did not complete")
+
+    # def export_bom(self, download_dir):
+    #     import time, os
+
+    #     # Step 1: Ensure page loaded
+    #     self.wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
+
+    #     # Step 2: Clean old files (VERY IMPORTANT)
+    #     for f in os.listdir(download_dir):
+    #         if f.endswith(".xlsx"):
+    #             os.remove(os.path.join(download_dir, f))
+
+    #     # Step 3: Wait for button
+    #     element = self.wait.until(EC.presence_of_element_located(self.bom_export_btn))
+
+    #     self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+    #     self.wait.until(EC.element_to_be_clickable(self.bom_export_btn))
+
+    #     # Step 4: Click
+    #     self.driver.execute_script("arguments[0].click();", element)
+
+    #     # Step 5: Wait for download
+    #     end_time = time.time() + 120
+
+    #     while time.time() < end_time:
+    #         files = os.listdir(download_dir)
+
+    #         completed_files = [
+    #             f for f in files
+    #             if f.endswith(".xlsx") and not f.endswith(".crdownload")
+    #         ]
+
+    #         if completed_files:
+    #             file_path = os.path.join(download_dir, completed_files[0])
+
+    #             # ensure file fully downloaded
+    #             size1 = os.path.getsize(file_path)
+    #             time.sleep(1)
+    #             size2 = os.path.getsize(file_path)
+
+    #             if size1 == size2:
+    #                 print("BOM Downloaded:", completed_files)
+    #                 return
+
+    #         time.sleep(1)
 
     #     raise Exception("BOM download did not complete")
 
     def export_bom(self, download_dir):
-        import time, os
 
-        # Step 1: Ensure page fully loaded
+        # Step 1: Ensure page loaded
         self.wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
 
-        # Step 2: Wait for button presence
+        before_files = set(os.listdir(download_dir))
+
+        # Step 2: Wait for button
         element = self.wait.until(EC.presence_of_element_located(self.bom_export_btn))
 
-        # Step 3: Scroll into view
         self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
-
-        # Step 4: Wait for visibility
-        self.wait.until(EC.visibility_of(element))
-
-        # Step 5: Wait until clickable
         self.wait.until(EC.element_to_be_clickable(self.bom_export_btn))
 
-        # Step 6: Click using JS (important for Jenkins)
+        # Step 3: Click
         self.driver.execute_script("arguments[0].click();", element)
 
-        # print("Clicked BOM Export")
+        # Step 4: Use utility
+        file_path = wait_for_new_file(download_dir, before_files, extension=".xlsx")
 
-        # Step 7: Wait for download start + completion
-        end_time = time.time() + 180
-
-        while time.time() < end_time:
-            files = os.listdir(download_dir)
-
-            # ignore temp files
-            completed_files = [
-                f for f in files
-                if f.endswith(".xlsx") and not f.endswith(".crdownload")
-            ]
-
-            # if completed_files:
-            #     print("BOM Downloaded:", completed_files)
-            #     return
-
-            # time.sleep(2)
-
-        raise Exception("BOM download did not complete")
-
+        return file_path
 
     # ---------------- TARIFF EXPORT ----------------
 
@@ -253,40 +268,127 @@ class TariffPage:
             ))
            
 
+    # def export_tariff(self, download_dir):
+
+    #     import time, os
+
+    #     before_files = set(os.listdir(download_dir))
+
+    #     # wait until button appears (after DOM refresh)
+    #     button = self.wait.until(EC.presence_of_element_located(
+    #         (By.XPATH, "//button[contains(.,'Export to Excel')]")
+    #     ))
+
+    #     # wait until enabled (no disabled attribute)
+    #     self.wait.until(lambda d: button.get_attribute("disabled") is None)
+
+    #     # click using JS (safe)
+    #     self.driver.execute_script("arguments[0].click();", button)
+
+    #     end_time = time.time() + 120
+
+    #     while time.time() < end_time:
+
+    #         after_files = set(os.listdir(download_dir))
+    #         new_files = after_files - before_files
+
+    #         completed = [f for f in new_files if f.endswith(".xlsx")]
+
+    #         if completed:
+    #             print("Tariff Downloaded:", completed)
+    #             return
+
+    #         time.sleep(2)
+
+    #     raise Exception("Tariff download failed")
+
+    # def export_tariff(self, download_dir):
+
+    #     import time, os
+
+    #     # Step 1: Wait for processing completion (extra safety)
+    #     self.wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
+
+    #     # Step 2: Wait until export button appears (robust)
+    #     button = self.wait.until(
+    #         lambda d: d.find_elements(*self.tariff_export_btn)
+    #     )[-1]
+
+    #     # Step 3: Scroll into view
+    #     self.driver.execute_script(
+    #         "arguments[0].scrollIntoView({block:'center'});", button
+    #     )
+
+    #     # Step 4: Wait until clickable
+    #     self.wait.until(lambda d: button.is_displayed() and button.is_enabled())
+
+    #     # Step 5: Clean old tariff files
+    #     for f in os.listdir(download_dir):
+    #         if f.endswith(".xlsx"):
+    #             os.remove(os.path.join(download_dir, f))
+
+    #     # Step 6: Click safely
+    #     try:
+    #         button.click()
+    #     except:
+    #         self.driver.execute_script("arguments[0].click();", button)
+
+    #     # Step 7: Wait for download
+    #     end_time = time.time() + 120
+
+    #     while time.time() < end_time:
+
+    #         files = os.listdir(download_dir)
+
+    #         completed = [
+    #             f for f in files
+    #             if f.endswith(".xlsx") and not f.endswith(".crdownload")
+    #         ]
+
+    #         if completed:
+    #             file_path = os.path.join(download_dir, completed[0])
+
+    #             size1 = os.path.getsize(file_path)
+    #             time.sleep(1)
+    #             size2 = os.path.getsize(file_path)
+
+    #             if size1 == size2:
+    #                 return
+
+    #         time.sleep(1)
+
+    #     raise Exception("Tariff download failed")
+
     def export_tariff(self, download_dir):
 
-        import time, os
+        # Step 1: Ensure page loaded
+        self.wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
 
         before_files = set(os.listdir(download_dir))
 
-        # wait until button appears (after DOM refresh)
-        button = self.wait.until(EC.presence_of_element_located(
-            (By.XPATH, "//button[contains(.,'Export to Excel')]")
-        ))
+        # Step 2: Wait for export button
+        button = self.wait.until(
+            lambda d: d.find_elements(*self.tariff_export_btn)
+        )[-1]
 
-        # wait until enabled (no disabled attribute)
-        self.wait.until(lambda d: button.get_attribute("disabled") is None)
+        # Step 3: Scroll
+        self.driver.execute_script(
+            "arguments[0].scrollIntoView({block:'center'});", button
+        )
 
-        # click using JS (safe)
-        self.driver.execute_script("arguments[0].click();", button)
+        # Step 4: Wait clickable
+        self.wait.until(lambda d: button.is_displayed() and button.is_enabled())
 
-        end_time = time.time() + 120
+        # Step 5: Click
+        try:
+            button.click()
+        except:
+            self.driver.execute_script("arguments[0].click();", button)
 
-        while time.time() < end_time:
+        # Step 6: Use utility
+        file_path = wait_for_new_file(download_dir, before_files, extension=".xlsx")
 
-            after_files = set(os.listdir(download_dir))
-            new_files = after_files - before_files
-
-            completed = [f for f in new_files if f.endswith(".xlsx")]
-
-            if completed:
-                print("Tariff Downloaded:", completed)
-                return
-
-            time.sleep(2)
-
-        raise Exception("Tariff download failed")
-
+        return file_path
 
     # ---------------- NAVIGATION ----------------
     def go_back(self):

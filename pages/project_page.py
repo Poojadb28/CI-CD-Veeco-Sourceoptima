@@ -46,35 +46,11 @@ class ProjectPage:
             .perform()
 
         # VERY IMPORTANT: wait for menu to appear
-        self.wait.until(EC.presence_of_element_located(
+        self.wait.until(EC.visibility_of_element_located(
             (By.XPATH, "//*[contains(text(),'New Root Space')]")
         ))
 
-    # def right_click_on_canvas(self):
-
-    #     canvas = self.wait.until(
-    #         EC.visibility_of_element_located(
-    #             (By.XPATH, "//div[contains(@class,'react-flow')]")
-    #         )
-    #     )
-
-    #     # scroll to canvas
-    #     self.driver.execute_script(
-    #         "arguments[0].scrollIntoView({block:'center'});", canvas
-    #     )
-
-    #     import time
-    #     time.sleep(2)  
-
-    #     ActionChains(self.driver).move_to_element(canvas).context_click().perform()
-
-    #     # wait for menu
-    #     self.wait.until(
-    #         EC.visibility_of_element_located(
-    #             (By.XPATH, "//span[contains(text(),'New Root Space')]")
-    #         )
-    #     )
-
+    
     # def click_new_root_space(self):
     #     self.wait.until(EC.element_to_be_clickable((By.XPATH, "//button[normalize-space()='New Root Space']"))).click()
 
@@ -343,17 +319,45 @@ class ProjectPage:
     #     )
     #     element.click()
 
-    def open_project(self, project_name):
+    # def open_project(self, project_name):
         
+    #     locator = (By.XPATH, f"//h3[contains(text(),'{project_name}')]")
+
+    #     element = self.wait.until(EC.visibility_of_element_located(locator))
+
+    #     self.driver.execute_script(
+    #         "arguments[0].scrollIntoView({block:'center'});", element
+    #     )
+
+    #     self.driver.execute_script("arguments[0].click();", element)
+
+    def open_project(self, project_name):
+
         locator = (By.XPATH, f"//h3[contains(text(),'{project_name}')]")
 
+        # Step 1: Wait for page load
+        self.wait.until(lambda d: d.execute_script("return document.readyState") == "complete")
+
+        # Step 2: Wait until project appears in DOM
+        self.wait.until(lambda d: project_name in d.page_source)
+
+        # Step 3: Wait for visibility
         element = self.wait.until(EC.visibility_of_element_located(locator))
 
+        # Step 4: Scroll to element
         self.driver.execute_script(
             "arguments[0].scrollIntoView({block:'center'});", element
         )
 
-        self.driver.execute_script("arguments[0].click();", element)
+        # Step 5: Wait until clickable
+        self.wait.until(EC.element_to_be_clickable(locator))
+
+        # Step 6: Try normal click first
+        try:
+            element.click()
+        except:
+            # Fallback for Jenkins/headless
+            self.driver.execute_script("arguments[0].click();", element)
 
     # def upload_new_file(self, file_path):
 
