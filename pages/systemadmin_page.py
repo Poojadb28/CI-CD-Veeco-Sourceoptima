@@ -93,41 +93,62 @@ class SystemAdminPage:
     def get_disable_message(self):
         return self.get_text(self.DISABLE_MSG)
     
-    def wait_for_disable_message(self):
-        self.wait.until(
-            EC.text_to_be_present_in_element(
-                self.DISABLE_MSG,
-                "disabled"
-            )
-        )
-        return self.driver.find_element(*self.DISABLE_MSG).text.strip()
+    # def wait_for_disable_message(self):
+    #     self.wait.until(
+    #         EC.text_to_be_present_in_element(
+    #             self.DISABLE_MSG,
+    #             "disabled"
+    #         )
+    #     )
+    #     return self.driver.find_element(*self.DISABLE_MSG).text.strip()
 
+    def wait_for_disable_message(self):
+
+        element = self.wait.until(
+            EC.visibility_of_element_located(self.DISABLE_MSG)
+        )
+
+        # wait until text is actually populated
+        self.wait.until(lambda d: element.text.strip() != "")
+
+        return element.text.strip()
+
+
+    # def wait_for_enable_message(self):
+    #     self.wait.until(
+    #         EC.text_to_be_present_in_element(
+    #             self.ENABLE_MSG,
+    #             "enabled"
+    #         )
+    #     )
+    #     return self.driver.find_element(*self.ENABLE_MSG).text.strip()
 
     def wait_for_enable_message(self):
-        self.wait.until(
-            EC.text_to_be_present_in_element(
-                self.ENABLE_MSG,
-                "enabled"
-            )
+
+        element = self.wait.until(
+            EC.visibility_of_element_located(self.ENABLE_MSG)
         )
-        return self.driver.find_element(*self.ENABLE_MSG).text.strip()
+
+        self.wait.until(lambda d: element.text.strip() != "")
+
+        return element.text.strip()
     
 
     def get_enable_message(self):
         return self.get_text(self.ENABLE_MSG)
     
-    # def is_play_enabled(self, play_name):
+    def is_play_enabled(self, play_name):
 
-    #     status = self.wait.until(
-    #         EC.visibility_of_element_located((
-    #             By.XPATH,
-    #             f"//h3[normalize-space()='{play_name}']"
-    #             f"/ancestor::div[contains(@class,'rounded-lg')]"
-    #             f"//span[contains(@class,'rounded-full')]"
-    #         ))
-    #     )
+        status = self.wait.until(
+            EC.visibility_of_element_located((
+                By.XPATH,
+                f"//h3[normalize-space()='{play_name}']"
+                f"/ancestor::div[contains(@class,'rounded-lg')]"
+                f"//span[contains(@class,'rounded-full')]"
+            ))
+        )
 
-    #     return status.text.strip().lower() == "enabled"
+        return status.text.strip().lower()
         
     
     #------------Credit History Download----------------#
