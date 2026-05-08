@@ -165,8 +165,7 @@ def cost_reduction_play(browser):
 
     # time.sleep(2) 
     project.select_all_files()
-    # project.wait_for_page_load()
-
+    
     # WAIT FOR UI TO BE READY AFTER FILE SELECTION
     project.wait.until(lambda d: len(d.find_elements(By.XPATH, "//select")) > 0)
 
